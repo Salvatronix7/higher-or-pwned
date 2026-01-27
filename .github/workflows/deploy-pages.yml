@@ -32,7 +32,9 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run build
+        env:
+          BASE_PATH: ${{ github.event_name == 'pull_request' && format('/{0}/pr-{1}/', github.event.repository.name, github.event.pull_request.number) || format('/{0}/', github.event.repository.name) }}
+        run: npm run build -- --base="${BASE_PATH}"
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
