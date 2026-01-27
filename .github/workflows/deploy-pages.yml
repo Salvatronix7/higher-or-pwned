@@ -1,16 +1,15 @@
-name: Deploy preview to GitHub Pages
+name: Deploy GitHub Pages
 
 on:
-  pull_request:
   push:
     branches:
       - main
       - master
+  pull_request:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
+  pull-requests: write
 
 concurrency:
   group: "pages-${{ github.ref }}"
@@ -19,6 +18,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,30 +28,31 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v4
-        with:
-          enablement: true
-
       - name: Install dependencies
         run: npm install
 
       - name: Build
         run: npm run build
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || '' }}
 
-  deploy:
-    needs: build
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Comment preview URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const baseUrl = `https://${context.repo.owner}.github.io/${context.repo.repo}/`;
+            const previewUrl = `${baseUrl}pr-${prNumber}/`;
+            const body = `✅ Preview de GitHub Pages disponible: ${previewUrl}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body
+            });
