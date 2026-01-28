@@ -1,36 +1,37 @@
 import { memo } from 'react';
 import type { FC } from 'react';
-import { formatNumber } from '~/utils';
-import type { Password } from '~/types';
-import styles from './PasswordCard.module.css';
 import { TerminalText } from '~/components/ui/TerminalText';
-
-interface PasswordCardProps {
-  readonly password: Password;
-  // readonly onClick: () => void;
-  readonly guess: () => void;
-  readonly isLoading: boolean;
-  readonly isDisabled: boolean;
-  readonly showCount: boolean;
-  readonly position: 'left' | 'right';
-}
+import { formatNumber } from '~/utils';
+import { TERMINAL_TEXT_DURATION } from './PasswordCard.constants';
+import type { PasswordCardProps } from './PasswordCard.types';
+import { getCardClassName } from './PasswordCard.utils';
+import './PasswordCard.css';
 
 export const PasswordCard: FC<PasswordCardProps> = memo(
   ({ password, guess, isLoading, isDisabled, showCount, position }) => {
     return (
       <button
         type='button'
-        className={`${styles.card} ${styles[position]}`}
+        className={getCardClassName(position)}
         onClick={guess}
         disabled={isLoading || isDisabled}
       >
-        <div className={styles.border}>
-          <div className={styles.content}>
-            <TerminalText text={password.value} key={password.value} duration={750} />
+        <div className='passwordCardBorder'>
+          <div className='passwordCardContent'>
+            <TerminalText
+              text={password.value}
+              key={password.value}
+              duration={TERMINAL_TEXT_DURATION}
+              className='passwordCardValue'
+            />
             {showCount && password.pwnedCount !== null && (
-              <TerminalText text={formatNumber(password.pwnedCount).toString()} duration={750} />
+              <TerminalText
+                text={formatNumber(password.pwnedCount).toString()}
+                duration={TERMINAL_TEXT_DURATION}
+                className='passwordCardCount'
+              />
             )}
-            {isLoading && <span className={styles.loading}>loading...</span>}
+            {isLoading && <span className='passwordCardLoading'>loading...</span>}
           </div>
         </div>
       </button>
