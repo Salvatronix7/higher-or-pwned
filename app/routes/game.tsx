@@ -5,6 +5,7 @@ import { useGame } from '~/hooks';
 import { PasswordCard } from '~/components';
 import type { GuessChoice } from '~/types';
 import styles from './game.module.css';
+import { TerminalText } from '~/components/ui/TerminalText';
 
 export const Route = createFileRoute('/game')({
   component: GamePage,
@@ -12,12 +13,7 @@ export const Route = createFileRoute('/game')({
 
 const Header: FC = memo(() => (
   <header className={styles.header}>
-    <h1 className={styles.title}>
-      <span className={styles.glow}>HIGHER</span>
-      <span className={styles.separator}> || </span>
-      <span className={styles.glow}>PWNED</span>
-      <span className={styles.cursor}>_</span>
-    </h1>
+    <TerminalText text='HIGHER || PWNED' duration={750} />
   </header>
 ));
 
@@ -52,7 +48,7 @@ function GamePage() {
     (choice: GuessChoice) => {
       makeGuess(choice);
     },
-    [makeGuess]
+    [makeGuess],
   );
 
   useEffect(() => {
@@ -72,17 +68,19 @@ function GamePage() {
       <main className={styles.main}>
         <div className={styles.gameBoard}>
           <PasswordCard
+            key={leftPassword.value}
             password={leftPassword}
-            onClick={() => handleGuess('left')}
+            guess={() => handleGuess('left')}
             isLoading={isLoading}
-            position="left"
+            position='left'
           />
           <ScoreDisplay score={score} />
           <PasswordCard
+            key={rightPassword.value}
             password={rightPassword}
-            onClick={() => handleGuess('right')}
+            guess={() => handleGuess('right')}
             isLoading={isLoading}
-            position="right"
+            position='right'
           />
         </div>
         <p className={styles.instruction}>

@@ -21,7 +21,7 @@ function WelcomePage() {
         handleStart();
       }
     },
-    [handleStart]
+    [handleStart],
   );
 
   useEffect(() => {
@@ -40,38 +40,17 @@ function WelcomePage() {
           {currentStep >= 0 && (
             <span className={styles.glow}>
               <TerminalText
-                text="HIGHER"
-                duration={1000}
-                onAnimationEnd={handleTextComplete}
-              />
-            </span>
-          )}
-          {currentStep >= 1 && (
-            <span className={styles.separator}>
-              <TerminalText
-                text=" || "
-                duration={400}
-                onAnimationEnd={handleTextComplete}
-              />
-            </span>
-          )}
-          {currentStep >= 2 && (
-            <span className={styles.glow}>
-              <TerminalText
-                text="PWNED"
-                duration={1000}
+                text='HIGHER || PWNED'
+                duration={750}
                 onAnimationEnd={handleTextComplete}
               />
             </span>
           )}
         </h1>
-        {currentStep >= 3 && (
-          <p className={styles.prompt}>
-            <TerminalText
-              text="> press any key to start_"
-              duration={1500}
-            />
-          </p>
+        {currentStep >= 1 && (
+          <span className={styles.prompt}>
+            <TerminalText text='> press any key to start' duration={750} />
+          </span>
         )}
       </div>
     </div>

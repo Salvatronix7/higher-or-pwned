@@ -41,7 +41,6 @@
 .prompt {
   font-size: var(--font-size-base);
   color: var(--color-terminal-green-dim);
-  animation: blink 1s ease-in-out infinite;
 }
 
 @keyframes blink {
