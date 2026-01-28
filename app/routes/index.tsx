@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { TerminalText } from '../components/ui/TerminalText';
 import styles from './index.module.css';
 
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
 
 function WelcomePage() {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
+  const textDelay = 750;
 
   const handleStart = useCallback(() => {
     navigate({ to: '/game' });
@@ -29,29 +29,21 @@ function WelcomePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  const handleTextComplete = useCallback(() => {
-    setCurrentStep((prev) => prev + 1);
-  }, []);
-
   return (
     <div className={styles.container} onClick={handleStart}>
       <div className={styles.content}>
         <h1 className={styles.title}>
-          {currentStep >= 0 && (
-            <span className={styles.glow}>
-              <TerminalText
-                text='HIGHER || PWNED'
-                duration={750}
-                onAnimationEnd={handleTextComplete}
-              />
-            </span>
-          )}
-        </h1>
-        {currentStep >= 1 && (
-          <span className={styles.prompt}>
-            <TerminalText text='> press any key to start' duration={750} />
+          <span className={styles.glow}>
+            <TerminalText text='HIGHER || PWNED' duration={750} />
           </span>
-        )}
+        </h1>
+        <span className={styles.prompt}>
+          <TerminalText
+            text='> press any key to start'
+            duration={750}
+            delay={textDelay}
+          />
+        </span>
       </div>
     </div>
   );
