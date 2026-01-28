@@ -1,0 +1,42 @@
+.textContainer {
+  display: flex;
+  width: fit-content;
+}
+
+/* Terminal typing animation - pure CSS */
+.terminalText {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  /* border-right: 2px solid currentColor; */
+  animation: typing var(--terminal-text-duration, 2000ms)
+    steps(var(--terminal-text-length, 40), end) forwards;
+}
+
+/* Typing effect - animates width from 0 to 100% */
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: currentColor;
+  }
+}
+
+.caret {
+  width: 0px;
+  height: auto;
+  color: currentColor;
+  /* animation: blink-caret 1s step-end infinite; */
+}

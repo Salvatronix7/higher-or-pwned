@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useCallback, useMemo, memo } from 'react';
+import { useCallback, useMemo, memo, useState } from 'react';
 import type { FC } from 'react';
 import { Button } from '~/components';
 import { getRandomItem } from '~/utils';
 import { SARCASTIC_MESSAGES } from '~/constants';
 import styles from './result.module.css';
+import { TerminalText } from '~/components/ui/TerminalText';
 
 interface ResultSearchParams {
   score: number;
@@ -34,25 +35,18 @@ const ASCII_ART = `
 
 const Header: FC = memo(() => (
   <header className={styles.header}>
-    <h1 className={styles.title}>
-      <span className={styles.glow}>HIGHER</span>
-      <span className={styles.separator}> || </span>
-      <span className={styles.glow}>PWNED</span>
-      <span className={styles.cursor}>_</span>
-    </h1>
+    <TerminalText text='HIGHER || PWNED' duration={750} />
   </header>
 ));
 
 Header.displayName = 'Header';
 
 function ResultPage() {
+  const [showFooter, setShowFooter] = useState(false);
   const navigate = useNavigate();
   const { score } = Route.useSearch();
 
-  const sarcasticMessage = useMemo(
-    () => getRandomItem(SARCASTIC_MESSAGES),
-    []
-  );
+  const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
 
   const handleRetry = useCallback(() => {
     navigate({ to: '/game' });
@@ -80,20 +74,26 @@ function ResultPage() {
       <Header />
       <main className={styles.main}>
         <div className={styles.scoreSection}>
-          <span className={styles.scoreLabel}>score</span>
-          <span className={styles.scoreValue}>{score}</span>
+          <TerminalText text='score' duration={750} />
+          <TerminalText text={score.toString()} duration={750} />
         </div>
 
         <pre className={styles.asciiArt}>{ASCII_ART}</pre>
 
-        <p className={styles.message}>{sarcasticMessage}</p>
+        <TerminalText
+          text={sarcasticMessage}
+          duration={750}
+          onAnimationEnd={() => setShowFooter(true)}
+        />
 
-        <div className={styles.actions}>
-          <Button onClick={handleRetry}>retry</Button>
-          <Button onClick={handleShare} variant="secondary">
-            share
-          </Button>
-        </div>
+        {showFooter && (
+          <div className={styles.actions}>
+            <Button onClick={handleRetry}>retry</Button>
+            <Button onClick={handleShare} variant='secondary'>
+              share
+            </Button>
+          </div>
+        )}
       </main>
     </div>
   );

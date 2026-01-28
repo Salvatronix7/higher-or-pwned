@@ -1,29 +1,15 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useCallback, useEffect, useState, memo } from 'react';
-import type { FC } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { TerminalText } from '../components/ui/TerminalText';
 import styles from './index.module.css';
 
 export const Route = createFileRoute('/')({
   component: WelcomePage,
 });
 
-const BlinkingCursor: FC = memo(() => {
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setVisible((prev) => !prev);
-    }, 530);
-    return () => clearInterval(interval);
-  }, []);
-
-  return <span className={styles.cursor}>{visible ? '_' : '\u00A0'}</span>;
-});
-
-BlinkingCursor.displayName = 'BlinkingCursor';
-
 function WelcomePage() {
   const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(0);
 
   const handleStart = useCallback(() => {
     navigate({ to: '/game' });
@@ -35,7 +21,7 @@ function WelcomePage() {
         handleStart();
       }
     },
-    [handleStart]
+    [handleStart],
   );
 
   useEffect(() => {
@@ -43,18 +29,29 @@ function WelcomePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  const handleTextComplete = useCallback(() => {
+    setCurrentStep((prev) => prev + 1);
+  }, []);
+
   return (
     <div className={styles.container} onClick={handleStart}>
       <div className={styles.content}>
         <h1 className={styles.title}>
-          <span className={styles.glow}>HIGHER</span>
-          <span className={styles.separator}> || </span>
-          <span className={styles.glow}>PWNED</span>
-          <BlinkingCursor />
+          {currentStep >= 0 && (
+            <span className={styles.glow}>
+              <TerminalText
+                text='HIGHER || PWNED'
+                duration={750}
+                onAnimationEnd={handleTextComplete}
+              />
+            </span>
+          )}
         </h1>
-        <p className={styles.prompt}>
-          {'>'} press any key to start_
-        </p>
+        {currentStep >= 1 && (
+          <span className={styles.prompt}>
+            <TerminalText text='> press any key to start' duration={750} />
+          </span>
+        )}
       </div>
     </div>
   );
