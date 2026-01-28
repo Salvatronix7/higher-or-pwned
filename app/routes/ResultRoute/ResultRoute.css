@@ -1,40 +1,16 @@
-.container {
+.resultRouteContainer {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding: var(--spacing-md);
 }
 
-.header {
+.resultRouteHeader {
   text-align: center;
   padding: var(--spacing-md) 0;
 }
 
-.title {
-  font-size: var(--font-size-lg);
-  font-weight: normal;
-  letter-spacing: 0.1em;
-}
-
-@media (min-width: 768px) {
-  .title {
-    font-size: var(--font-size-xl);
-  }
-}
-
-.glow {
-  text-shadow: var(--glow-text);
-}
-
-.separator {
-  color: var(--color-terminal-green-dim);
-}
-
-.cursor {
-  color: var(--color-terminal-green);
-}
-
-.main {
+.resultRouteMain {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -44,26 +20,14 @@
   padding: var(--spacing-lg);
 }
 
-.scoreSection {
+.resultRouteScoreSection {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xs);
 }
 
-.scoreLabel {
-  font-size: var(--font-size-base);
-  color: var(--color-terminal-green-dim);
-  letter-spacing: 0.2em;
-}
-
-.scoreValue {
-  font-size: var(--font-size-3xl);
-  color: var(--color-terminal-green);
-  text-shadow: var(--glow-text);
-}
-
-.asciiArt {
+.resultRouteAsciiArt {
   font-size: 0.6rem;
   line-height: 1.1;
   color: var(--color-terminal-green);
@@ -73,12 +37,12 @@
 }
 
 @media (min-width: 768px) {
-  .asciiArt {
+  .resultRouteAsciiArt {
     font-size: 0.8rem;
   }
 }
 
-.message {
+.resultRouteMessage {
   font-size: var(--font-size-base);
   color: var(--color-terminal-green);
   text-align: center;
@@ -86,12 +50,12 @@
 }
 
 @media (min-width: 768px) {
-  .message {
+  .resultRouteMessage {
     font-size: var(--font-size-lg);
   }
 }
 
-.actions {
+.resultRouteActions {
   display: flex;
   gap: var(--spacing-lg);
   margin-top: var(--spacing-lg);
