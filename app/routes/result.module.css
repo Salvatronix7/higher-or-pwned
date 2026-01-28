@@ -68,7 +68,6 @@
   line-height: 1.1;
   color: var(--color-terminal-green);
   text-shadow: var(--glow-text);
-  text-align: center;
   white-space: pre;
 }
 

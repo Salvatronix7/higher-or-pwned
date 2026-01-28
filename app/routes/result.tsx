@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useCallback, useMemo, memo, useState } from 'react';
 import type { FC } from 'react';
-import { Button } from '~/components';
+import { AsciiArtTyping, Button } from '~/components';
 import { getRandomItem } from '~/utils';
 import { SARCASTIC_MESSAGES } from '~/constants';
 import styles from './result.module.css';
@@ -79,7 +79,7 @@ function ResultPage() {
           <TerminalText text={score.toString()} duration={750} delay={textDelay} />
         </div>
 
-        <pre className={styles.asciiArt}>{ASCII_ART}</pre>
+        <AsciiArtTyping text={ASCII_ART} duration={2000} className={styles.asciiArt} />
 
         <TerminalText
           text={sarcasticMessage}
