@@ -45,6 +45,7 @@ function ResultPage() {
   const [showFooter, setShowFooter] = useState(false);
   const navigate = useNavigate();
   const { score } = Route.useSearch();
+  const textDelay = 750;
 
   const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
 
@@ -75,7 +76,7 @@ function ResultPage() {
       <main className={styles.main}>
         <div className={styles.scoreSection}>
           <TerminalText text='score' duration={750} />
-          <TerminalText text={score.toString()} duration={750} />
+          <TerminalText text={score.toString()} duration={750} delay={textDelay} />
         </div>
 
         <pre className={styles.asciiArt}>{ASCII_ART}</pre>
@@ -83,6 +84,7 @@ function ResultPage() {
         <TerminalText
           text={sarcasticMessage}
           duration={750}
+          delay={textDelay}
           onAnimationEnd={() => setShowFooter(true)}
         />
 

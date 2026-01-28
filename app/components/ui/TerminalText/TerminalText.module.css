@@ -9,9 +9,11 @@
   position: relative;
   overflow: hidden;
   white-space: nowrap;
+  width: 0;
   /* border-right: 2px solid currentColor; */
   animation: typing var(--terminal-text-duration, 2000ms)
     steps(var(--terminal-text-length, 40), end) forwards;
+  animation-delay: var(--terminal-text-delay, 0ms);
 }
 
 /* Typing effect - animates width from 0 to 100% */
