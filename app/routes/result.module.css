@@ -64,17 +64,9 @@
 }
 
 .asciiArt {
-  font-size: 0.6rem;
-  line-height: 1.1;
   color: var(--color-terminal-green);
   text-shadow: var(--glow-text);
   white-space: pre;
-}
-
-@media (min-width: 768px) {
-  .asciiArt {
-    font-size: 0.8rem;
-  }
 }
 
 .message {

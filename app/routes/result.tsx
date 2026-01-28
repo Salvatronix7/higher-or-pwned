@@ -19,19 +19,29 @@ export const Route = createFileRoute('/result')({
 });
 
 const ASCII_ART = `
-          .-"""-.
-         /        \\
-        /_        _\\
-       // \\      / \\\\
-       |\\__\\    /__/|
-       \\    ||    /
-        \\        /
-         \\  __  /
-          '.__.'
-           |  |
-          /|  |\\
-         (_|  |_)
+          .                                                      .
+        .n                   .                 .                  n.
+  .   .dP                  dP                   9b                 9b.    .
+ 4    qXb         .       dX                     Xb       .        dXp     t
+dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
+9XXb._       _.dXXXXb dXXXXbo.                 .odXXXXb dXXXXb._       _.dXXP
+ 9XXXXXXXXXXXXXXXXXXXVXXXXXXXXOo.           .oOXXXXXXXXVXXXXXXXXXXXXXXXXXXXP
+  "9XXXXXXXXXXXXXXXXXXXXX'~   ~"OOO8b   d8OOO'~   ~"XXXXXXXXXXXXXXXXXXXXXP'
+    "9XXXXXXXXXXXP' "9XX'   DIE    "98v8P'  HUMAN   "XXP' "9XXXXXXXXXXXP'
+        ~~~~~~~       9X.          .db|db.          .XP       ~~~~~~~
+                        )b.  .dbo.dP'"v'"9b.odb.  .dX(
+                      ,dXXXXXXXXXXXb     dXXXXXXXXXXXb.
+                     dXXXXXXXXXXXP'   .   "9XXXXXXXXXXXb
+                    dXXXXXXXXXXXXb   d|b   dXXXXXXXXXXXXb
+                    9XXb'   "XXXXXb.dX|Xb.dXXXXX'   "dXXP
+                     "'      9XXXXXX(   )XXXXXXP      "'
+                              XXXX X."v'.X XXXX
+                              XP^X'"b   d'"X^XX
+                              X. 9  "   '  P )X
+                              "b  "       '  d'
+                               "             '
 `;
+
 
 const Header: FC = memo(() => (
   <header className={styles.header}>
@@ -79,16 +89,16 @@ function ResultPage() {
           <TerminalText text={score.toString()} duration={750} delay={textDelay} />
         </div>
 
-        <AsciiArtTyping text={ASCII_ART} duration={2000} className={styles.asciiArt} />
+        <AsciiArtTyping text={ASCII_ART} duration={1000} delay={textDelay * 2} className={styles.asciiArt} />
 
         <TerminalText
           text={sarcasticMessage}
           duration={750}
-          delay={textDelay}
+          delay={textDelay * 3}
           onAnimationEnd={() => setShowFooter(true)}
         />
 
-        {showFooter && (
+        {true && (
           <div className={styles.actions}>
             <Button onClick={handleRetry}>retry</Button>
             <Button onClick={handleShare} variant='secondary'>

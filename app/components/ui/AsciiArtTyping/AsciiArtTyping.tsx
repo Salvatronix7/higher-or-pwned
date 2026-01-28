@@ -18,22 +18,30 @@ export const AsciiArtTyping: FC<AsciiArtTypingProps> = memo(
       ...lines.map((line) => line.length),
       1,
     );
+
+    console.log(duration);
+    console.log(lineCount);
+
+    var actualDuration = duration / lineCount;
     const style: CSSProperties = {
-      '--ascii-art-duration': `${duration}ms`,
-      '--ascii-art-delay': `${delay}ms`,
+      '--ascii-art-duration': `${actualDuration}ms`,
       '--ascii-art-length': `${text.length}`,
       '--ascii-art-lines': `${lineCount}`,
       '--ascii-art-columns': `${maxLineLength}`,
+
     } as CSSProperties;
 
     return (
-      <pre
+      <div
         className={`${styles.asciiArtTyping} ${className ?? ''}`}
-        style={style}
         onAnimationEnd={onAnimationEnd}
       >
-        {text}
-      </pre>
+        {text.split('\n').map((line, index) => (
+          <div key={index} style={{ ...style, '--ascii-art-delay': `${delay + (actualDuration * index)}ms`, } as any} className={styles.asciiArtLine}>
+            {line}
+          </div>
+        ))}
+      </div>
     );
   },
 );

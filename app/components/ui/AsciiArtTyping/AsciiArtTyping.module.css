@@ -1,54 +1,27 @@
 .asciiArtTyping {
   position: relative;
-  animation: ascii-art-finish var(--ascii-art-duration, 2000ms) steps(1, end)
-    forwards;
-  animation-delay: var(--ascii-art-delay, 0ms);
-}
-
-.asciiArtTyping::before,
-.asciiArtTyping::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--color-background);
-  pointer-events: none;
-}
-
-.asciiArtTyping::before {
-  animation: ascii-art-reveal-rows var(--ascii-art-duration, 2000ms)
-    steps(var(--ascii-art-lines, 12), end) forwards;
-  animation-delay: var(--ascii-art-delay, 0ms);
-}
-
-.asciiArtTyping::after {
-  animation: ascii-art-reveal-columns var(--ascii-art-duration, 2000ms)
-    steps(var(--ascii-art-columns, 40), end) forwards;
-  animation-delay: var(--ascii-art-delay, 0ms);
-}
-
-@keyframes ascii-art-reveal-rows {
-  from {
-    clip-path: inset(0 0 0 0);
-  }
-  to {
-    clip-path: inset(100% 0 0 0);
-  }
 }
 
 @keyframes ascii-art-reveal-columns {
   from {
     clip-path: inset(0 0 0 0);
   }
+
   to {
-    clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 0 0 100%);
   }
 }
 
-@keyframes ascii-art-finish {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 1;
-  }
+.asciiArtLine {
+  height: 1rem;
+  position: relative;
+}
+
+.asciiArtLine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: ascii-art-reveal-columns var(--ascii-art-duration, 2000ms) var(--ascii-art-delay, 0ms) steps(var(--ascii-art-columns, 40), end) forwards;
+  background: var(--color-background);
 }
