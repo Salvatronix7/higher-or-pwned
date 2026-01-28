@@ -9,6 +9,7 @@
   position: relative;
   overflow: hidden;
   white-space: nowrap;
+  width: 0;
   /* border-right: 2px solid currentColor; */
   animation: typing var(--terminal-text-duration, 2000ms)
     steps(var(--terminal-text-length, 40), end) forwards;
