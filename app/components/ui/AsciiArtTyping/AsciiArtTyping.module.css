@@ -1,0 +1,28 @@
+.asciiArtTyping {
+  position: relative;
+  display: grid;
+}
+
+@keyframes ascii-art-reveal-columns {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+.asciiArtLine {
+  height: 1rem;
+  position: relative;
+}
+
+.asciiArtLine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: ascii-art-reveal-columns var(--ascii-art-duration, 2000ms) var(--ascii-art-delay, 0ms) steps(var(--ascii-art-columns, 40), end) forwards;
+  background: var(--color-background);
+}

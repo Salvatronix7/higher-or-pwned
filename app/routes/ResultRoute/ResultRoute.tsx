@@ -1,17 +1,14 @@
 import { memo, useCallback, useMemo, useState } from 'react';
 import type { FC } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Button } from '~/components';
+import { AsciiArtTyping, Button } from '~/components';
 import { TerminalText } from '~/components/ui/TerminalText';
 import { SARCASTIC_MESSAGES } from '~/constants';
 import { getRandomItem } from '~/utils';
 import {
-  RESULT_ROUTE_ASCII_ART,
-  RESULT_ROUTE_SHARE_TITLE,
   RESULT_ROUTE_TEXT_DELAY_MS,
   RESULT_ROUTE_TITLE_TEXT,
 } from './ResultRoute.constants';
-import { getShareText } from './ResultRoute.utils';
 import './ResultRoute.css';
 
 interface ResultRouteProps {
@@ -20,29 +17,205 @@ interface ResultRouteProps {
 
 const Header: FC = memo(() => (
   <header className='resultRouteHeader'>
-    <TerminalText text={RESULT_ROUTE_TITLE_TEXT} duration={750} />
+    <TerminalText text={RESULT_ROUTE_TITLE_TEXT} duration={500} />
   </header>
 ));
 
 Header.displayName = 'Header';
 
+
+const ASCII_ART = [
+  `
+                     .ed"""" """$$$$be.
+                   -"           ^""**$$$e.
+                 ."                   '$$$c
+                /                      "4$$b
+               d  3                      $$$$
+               $  *                   .$$$$$$
+              .$  ^c           $$$$$e$$$$$$$$.
+              d$L  4.         4$$$$$$$$$$$$$$b
+              $$$$b ^ceeeee.  4$$ECL.F*$$$$$$$
+  e$""=.      $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
+ z$$b. ^c     3$$$F "$$$$b   $"$$$$$$$  $$$$*"      .=""$c
+4$$$$L        $$P"  "$$b   .$ $$$$$...e$$        .=  e$$$.
+^*$$$$$c  %..   *c    ..    $$ 3$$$$$$$$$$eF     zP  d$$$$$
+  "**$$$ec   "   %ce""    $$$  $$$$$$$$$$*    .r" =$$$$P""
+        "*$b.  "c  *$e.    *** d$$$$$"L$$    .d"  e$$***"
+          ^*$$c ^$c $$$      4J$$$$$% $$$ .e*".eeP"
+             "$$$$$$"'$=e....$*$$**$cz$$" "..d$*"
+               "*$$$  *=%4.$ L L$ P3$$$F $$$P"
+                  "$   "%*ebJLzb$e$$$$$b $P"
+                    %..      4$$$$$$$$$$ "
+                     $$$e   z$$$$$$$$$$%
+                      "*$c  "$$$$$$$P"
+                       ."""*$$$$$$$$bc
+                    .-"    .$***$$$"""*e.
+                 .-"    .e$"     "*$c  ^*b.
+          .=*""""    .e$*"          "*bc  "*$e..
+        .$"        .z*"               ^*$e.   "*****e.
+        $$ee$c   .d"                     "*$.        3.
+        ^*$E")$..$"                         *   .ee==d%
+           $.d$$$*                           *  J$$$e*
+            """""                              "$$$"
+`,
+  `
+          .                                                      .
+        .n                   .                 .                  n.
+  .   .dP                  dP                   9b                 9b.    .
+ 4    qXb         .       dX                     Xb       .        dXp     t
+dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
+9XXb._       _.dXXXXb dXXXXbo.                 .odXXXXb dXXXXb._       _.dXXP
+ 9XXXXXXXXXXXXXXXXXXXVXXXXXXXXOo.           .oOXXXXXXXXVXXXXXXXXXXXXXXXXXXXP
+  "9XXXXXXXXXXXXXXXXXXXXX'~   ~"OOO8b   d8OOO'~   ~"XXXXXXXXXXXXXXXXXXXXXP'
+    "9XXXXXXXXXXXP' "9XX'   DIE    "98v8P'  HUMAN   "XXP' "9XXXXXXXXXXXP'
+        ~~~~~~~       9X.          .db|db.          .XP       ~~~~~~~
+                        )b.  .dbo.dP'"v'"9b.odb.  .dX(
+                      ,dXXXXXXXXXXXb     dXXXXXXXXXXXb.
+                     dXXXXXXXXXXXP'   .   "9XXXXXXXXXXXb
+                    dXXXXXXXXXXXXb   d|b   dXXXXXXXXXXXXb
+                    9XXb'   "XXXXXb.dX|Xb.dXXXXX'   "dXXP
+                     "'      9XXXXXX(   )XXXXXXP      "'
+                              XXXX X."v'.X XXXX
+                              XP^X'"b   d'"X^XX
+                              X. 9  "   '  P )X
+                              "b  "       '  d'
+                               "             '
+`,
+  `
+              ____
+        __,---'     '--.__
+     ,-'                ; '.
+    ,'                  '--.'--.
+   ,'                        '._ '-.
+   ;                     ;     '-- ;
+ ,-'-_       _,-~~-.      ,--      '.
+ ;;   '-,;    ,'~'.__    ,;;;    ;  ;
+ ;;    ;,'  ,;;      ',  ;;;     '. ;
+ ':   ,'    ':;     __/  '.;      ; ;
+  ;~~^.   '.   '---'~~    ;;      ; ;
+  ',' '.   '.            .;;;     ;'
+  ,',^. '.  '._    __    ':;     ,'
+  '-' '--'    ~'--'~~'--.  ~    ,'
+ /;'-;_ ; ;. /. /   ; ~~'-.     ;
+; ;  ; ',;'-;__;---;      '----'
+''-'-;__;:  ;  ;__;
+         '-- '-'
+`,
+  `
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⡀⢄⢮⡳⣶⢭⣖⣢⡤⢀⡀⠀
+⠀⠀⠀⢀⢤⣢⣵⣾⣾⣿⣿⣿⣹⣿⣿⣿⣿⣶⣯⣵⣒⡠⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⣎⣿⣿⣿⣿⣿⡿⠛⠛⠻⣿⣿⣿⣿⣿⣿⡇⣿⣟⣵⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⡇⠼⣿⣿⣿⡟⠀⢠⣤⢸⡊⢻⣿⡿⣿⣿⡇⣿⣿⣷⣝⣕⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⡇⢑⢻⣿⣿⣧⡀⣅⡡⣠⠆⠹⣿⣿⣿⣿⣷⣿⣿⣿⣿⣷⢟⢯⠢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⡇⣸⢉⢿⣯⣿⣿⣶⣧⣤⣰⣾⣿⡟⠽⣋⣈⢿⣿⣿⣿⣿⢸⣷⣝⠮⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⣷⣿⠠⣞⢿⣿⣿⣿⣿⢟⡫⡗⡢⡑⢭⣗⡺⢷⣙⠿⣿⣿⣼⣿⢿⣷⣍⣎⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⣿⣿⣼⡏⠗⢝⢿⣿⡈⢥⣿⠞⡜⡼⣾⣛⢿⣛⣻⣷⣰⠹⣻⣿⣿⣿⣿⣿⣮⡪⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣸⣿⣿⣾⡇⠄⠁⠋⣊⢟⠬⡻⣯⡵⣣⡻⣟⡦⢾⣿⣋⣇⢉⣿⣿⣿⣿⣿⣿⣿⣿⣿⡪⡢⡀⠀⠀⠀⠀⠀⠀⠀
+⠠⠰⣹⢔⠹⣿⣿⣫⠁⠀⢰⡌⢿⡎⢜⠝⡿⣟⡫⢗⡫⠏⠙⢫⣵⠘⣄⡘⠿⣿⣿⣿⣿⣿⣿⣿⣾⣮⡢⡀⠀⠀⠀⠀⠀
+⠀⠀⠀⠄⡚⠘⢿⣯⡅⠀⢸⠇⠄⠀⠀⠉⠲⠔⡱⡻⢿⣽⣁⠢⢼⣶⣿⣿⣷⣬⡉⡹⠿⣿⣿⣿⣿⣿⣯⡪⡢⡀⠀⠀⠀
+⠀⠀⠠⠀⢀⠄⠎⢿⣷⠀⢸⠇⡄⡆⡌⠁⡂⠀⡘⢠⠱⠨⢛⢿⣶⣬⡉⡹⠻⣿⣷⣢⣄⠙⢿⣿⣿⣿⣿⡿⠞⢞⡆⠀⠀
+⠀⠀⠀⠀⠈⠈⠒⠊⡻⡇⡄⡒⠤⡀⠁⠃⠁⢠⢀⠁⠀⠀⠂⢉⢊⠝⠿⣶⡤⡘⢿⣿⣷⣝⢦⣙⠿⡛⣉⣼⣾⣿⡇⠀⠀
+⠀⠀⠀⠀⠀⠘⠠⢬⠐⠱⠺⢵⡣⢆⡅⢆⡎⠘⠈⠘⢰⠰⠀⠃⠎⡔⠸⢐⠹⢻⢵⡩⣛⢟⢋⣡⣵⣿⡟⢹⢿⣿⡇⠀⠀
+⠀⠀⠀⠀⠀⠀⠂⠄⡈⢀⠀⠑⢉⢓⠾⡥⢨⠐⡠⣀⠂⠆⡄⡄⡀⠐⢀⠀⡌⡖⢌⠪⣤⢾⣿⣿⣿⣏⣍⢰⣿⢿⡇⢤⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠋⠐⠁⠀⠈⠐⠱⠁⢊⢅⡃⠉⢒⠤⡁⠃⠦⢌⠘⠀⠁⠀⠂⣿⣿⣿⣿⣿⣿⣧⣸⣾⣿⡇⢠⠰
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠄⠄⡀⠂⠅⠌⠕⣰⢈⠒⠵⢢⢎⣐⠀⡃⠄⠀⣿⢷⣿⣿⣿⣟⣯⣷⠿⢻⢱⠂⠈
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠈⠀⢉⢒⠄⡂⡖⡩⢒⠄⠀⣿⡿⣟⣽⣾⡟⡏⠆⠀⠑⠈⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠄⠂⠈⠈⢑⠣⢇⡎⠄⣿⣿⡿⡉⠃⠃⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠀⠀⠁⠁⠀⠎⠛⠉⡀⠉⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀
+`,
+  `
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠠⡄
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠰⣜⠎⡳⣌⠰⢡⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡜⣚⠶⣙⡼⢢⣙⠧⢊⠵⣳⡄⠈⢀⠐⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡞⣧⢟⡻⢏⣝⢣⠦⣜⡹⡄⠊⣥⠻⣄⠀⠀⠁⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⢣⣟⢮⡳⣝⣪⢎⣧⢛⡴⢣⡝⡠⡔⢫⠜⣧⠀⠂⡀⠈⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣐⣯⣿⢯⣿⡽⡾⢥⣛⣶⢫⣜⡳⣎⠵⣘⢆⠓⡜⢳⡄⠀⠡⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⢹⡾⣽⡿⠿⣙⣞⡳⡽⢺⡝⡼⢳⢽⣚⡵⣊⠕⡈⢆⠻⢳⠶⣦⢌⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠎⣇⠁⢀⠸⣱⢏⡸⢁⠏⣱⢈⠱⡏⣾⣱⢿⡸⡾⢰⠀⠈⢁⠏⣶⠉⡆⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⣘⣉⠙⣄⠀⠡⢎⠴⣩⠞⡤⢉⠦⣁⠉⣿⣣⠗⣥⢧⢨⡑⡌⡀⢎⡵⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠐⠠⠀⠀⠀⠀⠀⠰⠘⠇⠸⣶⣠⢎⣷⡱⣮⠜⣥⢢⢐⠂⢿⣽⣻⢶⣎⢷⡰⡜⣵⢪⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠈⣣⠈⡔⠳⣒⠦⡤⢀⠄⠀⣟⣷⢿⢞⡷⢯⣞⡖⡣⢎⡡⢸⢿⣝⢷⣚⢧⡳⣙⣢⠛⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⡀⠀⠀⢨⠁⠐⡀⢀⠀⠀⢀⠀⢀⣿⣿⣿⣿⡿⣷⢿⡼⡑⢆⢡⢸⣿⣞⣧⢻⢸⡓⠷⣌⠋⢆⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠀
+⠧⣍⠠⠸⣏⠀⡐⠀⠈⠀⠀⠀⢘⣿⣿⣿⣿⣿⡿⣏⣷⠹⢎⡲⢸⣿⡿⡞⣭⢣⡝⠖⡎⡑⠌⡒⠄⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⣘⠀
+⢭⠦⠁⠀⣯⠄⠠⠀⠐⠀⠀⠀⣹⣿⣿⣿⣿⣿⢿⣻⣞⠻⣎⠵⢸⣽⣿⢷⢣⠏⡼⣹⢀⠂⠜⠈⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠃
+⢸⢣⠀⠀⠘⡀⠀⠈⠄⠁⠈⠢⣿⣿⣿⣿⣿⣿⣿⣯⣟⢻⣜⡳⣸⣿⣿⣯⢳⢊⠥⠃⡌⠀⠄⠡⠘⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠀
+⢸⠐⡢⠀⠀⠙⠀⠀⠈⠐⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣛⢮⡳⠅⣿⣿⢾⡹⢌⡒⢉⡀⢊⠀⢂⠡⠌⢡⠀⠀⠀⠀⠀⠀⠀⠠⠑⠀
+⠀⢧⡁⠣⢀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⢹⡻⣝⠂⣿⣟⣯⢓⠣⠐⡁⠒⢀⠎⢀⠐⠈⡀⡄⢀⠀⠀⠀⡀⠀⠂⠀⠀
+⠀⠈⠳⣤⣀⡈⡐⣀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡼⣟⡝⡂⢿⡘⡎⠍⡃⢁⡈⠈⢆⡘⢈⠐⠘⠀⡀⢂⠐⠠⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠉⠽⣢⣿⣿⣿⣿⣿⣻⣿⣿⣿⣿⣿⣿⣿⣿⡇⡯⣗⠆⢫⠱⣈⠰⠈⠀⠤⠉⡀⠜⡠⠂⠄⡐⢀⠂⠈⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⢼⡛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⣷⣃⣯⣝⡒⢨⡑⠄⠰⠈⠠⢁⠂⠁⣀⠑⡈⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⢰⡌⡻⢿⡿⣿⣿⣿⣿⢯⣯⢯⡷⣧⣏⡼⡅⢸⠥⡘⢀⠁⢀⠠⠈⠄⠀⠂⠄⠉⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷⢱⡸⡇⠐⢽⡿⣽⣻⡾⣯⣽⢶⡭⣗⡣⢘⡧⢌⠠⠈⢀⠀⡀⠀⠈⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⢠⣹⣧⡀⣼⣟⢶⣫⣿⡳⣽⢾⡵⣳⢣⠘⣮⢌⡐⡀⠠⠀⠄⠐⠀⡁⠂⠄⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⢠⡇⢹⢿⣾⡟⣯⢿⣽⢷⣝⣶⡿⣯⡳⢈⡇⡶⠠⠄⡀⠐⡈⠄⡀⠠⠁⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠣⣦⠉⣹⣇⣿⣿⢷⣻⢮⡷⣿⣳⢏⡄⣷⢣⢏⡔⠠⡁⠐⡐⢀⠐⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⠠⡄⢹⡟⣿⣿⠯⣷⣻⠝⠀⠉⠲⠀⡾⠀⠀⠈⡕⢠⠁⠠⡜⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢣⣄⠀⠀⠀⡇⢿⣿⢷⣻⡍⠀⠀⠀⠀⠁⠁⠀⠀⠐⠈⢌⠠⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠇⠀⠀⢠⢸⣿⣯⣧⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡡⠁⡘⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠄⠀⠀⠀⠘⢸⣞⣿⡇⠀⠀⠀⡀⠠⢀⠀⡁⠀⡀⢀⡔⣧⠄⠠⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣧⠀⠀⠀⠠⢸⡏⣿⡇⢀⠀⠄⠀⠐⡀⠂⡅⠀⠀⠃⣼⢿⠌⠀⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢄⠀⠀⠀⣼⢷⡘⣷⡈⠤⠀⠀⠀⣁⠂⠇⡏⠀⣼⢏⣿⠂⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢸⣧⠘⢿⣷⡌⡂⠄⠈⡄⠀⡇⠀⢪⡽⣞⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠧⠀⠀⢸⢸⡿⠀⠘⢻⣿⣧⡙⢦⡘⢸⡼⣎⣿⡻⣜⠀⠂⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢓⡆⠀⢸⣿⡗⠀⠀⢺⠻⣿⡝⠲⣰⠸⡙⡥⠽⡱⢈⠀⠈⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠄⠸⢹⠇⠀⢰⢮⠓⠮⣿⢶⠶⢰⣯⢟⣣⠁⠀⡂⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠀⠀⣾⠃⠀⢨⢿⢠⣷⠈⢩⡍⠈⣲⠀⢰⣦⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠙⠀⠘⠁⠀⠘⠌⠸⡿⡄⣼⢛⠀⡿⠄⠸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⢠⠅⠰⠘⠃⠈⠁⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣹⠀⠀⠀⠀⠀⢦⠩⢰⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢘⡀⠄⠀⠂⠀⢊⠁⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠉⠀⠀⠀⠁⠆⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⢀⡀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⢸⡁⠀⠀⠀⠀⠀⠀⡄⠄⢘⣧⣦⣀⣠⡴
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠈⠄⠀⢀⠀⠈⠀⠂⠈⡈⠈⢧⠻⠝⠁
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠈⢤⠀⠀⠂⠀⠈⠃⠐⡄
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠀⠀⠀⠑⠠⠠⠁⠐⠀⠈
+`,
+`
+⠀⠀⠀⢀⡤⢤⢄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⣼⡅⠠⢀⡈⢀⣙⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠤⠤⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⢸⠀⠀⠀⠈⠙⠿⣝⢇⠀⠀⣀⣠⠤⠤⠤⠤⣤⡤⠚⠁⠀⠀⠀⠀⠀⠉⠢⡀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢧⡀⠀⠀⠠⣄⠈⢺⣺⡍⠀⠀⠀⠀⣠⠖⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡄⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠸⡆⢀⠘⣔⠄⠑⠂⠈⠀⡔⠤⠴⠚⡁⠀⠀⢀⠀⠀⠀⣠⠔⢶⡢⡀⠀⠠⡇⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⢠⣇⠀⢃⡀⠁⠀⠀⠀⡸⠃⢀⡴⠊⢀⠀⠀⠈⢂⡤⠚⠁⠀⠀⠙⢿⠀⠉⡇⠀⠀⠀⠀⠀
+⠀⠀⠀⣠⠾⣹⢤⢼⡆⠀⠀⠀⠀⠀⠀⠈⢀⠞⠁⠀⢠⣴⠏⠀⠀⠀⠀⠀⠀⠸⡇⠀⢇⠀⠀⠀⠀⠀
+⠀⠀⣾⢡⣤⡈⠣⡀⠙⠒⠀⠀⠀⠀⣀⠤⠤⣤⠤⣌⠁⢛⡄⠀⠀⠀⠀⠀⠠⡀⢇⠀⠘⣆⠀⢀⡴⡆
+⠀⠀⣿⢻⣿⣿⣄⡸⠀⡆⠀⠒⣈⣩⣉⣉⡈⠉⠉⠢⣉⠉⠀⠀⠀⠀⠀⠀⠀⢣⠈⠢⣀⠈⠉⢁⡴⠃
+⠀⢀⢿⣿⣿⡿⠛⠁⠀⢻⣿⣿⣿⣿⣿⣿⣿⣷⣦⣄⣸⢿⠀⠀⠀⠀⠀⠀⠀⠸⡄⠀⡇⠉⠉⠁⠀⠀
+⣠⣞⠘⢛⡛⢻⣷⣤⡀⠈⡎⣿⣿⣿⣿⣿⣿⣿⣿⣿⠹⠏⠀⠀⠀⠀⠀⠀⠀⠀⠇⢰⡇⠀⠀⠀⠀⠀
+⠻⣌⠯⡁⢠⣸⣿⣿⣷⡄⠁⠈⢻⢿⣿⣿⣿⣿⠿⠋⠃⠰⣀⠀⠀⠀⠀⠀⠀⠀⠀⣾⠇⠀⠀⠀⠀⠀
+⠀⠀⠉⢻⠨⠟⠹⢿⣿⢣⠀⠀⢨⡧⣌⠉⠁⣀⠴⠊⠑⠀⡸⠛⠀⠀⠀⠀⠀⣸⢲⡟⠀⠀⠀⠀⠀⠀
+⠀⠀⣠⠏⠀⠀⠀⠉⠉⠁⠀⠐⠁⠀⠀⢉⣉⠁⠀⠀⢀⠔⢷⣄⠀⠀⠀⠀⢠⣻⡞⠀⠀⠀⠀⠀⠀⠀
+⠀⢠⠟⡦⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⢾⠉⠀⣹⣦⠤⣿⣿⡟⠁⠀⠀⠀⢀⣶⠟⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠈⠙⣦⣁⡎⢈⠏⢱⠚⢲⠔⢲⠲⡖⠖⣦⣿⡟⠀⣿⡿⠁⣠⢔⡤⠷⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢿⣟⠿⡿⠿⠶⢾⠶⠾⠶⠾⠞⢻⠋⠏⣸⠁⠀⡽⠓⠚⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⢸⡏⠳⠷⠴⠣⠜⠢⠜⠓⠛⠊⠀⢀⡴⠣⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⣏⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠊⠁⢀⣀⣀⠴⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠘⢦⡀⠀⠀⠀⠀⠀⠀⢀⣀⠴⠖⠒⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠉⠑⠒⠒⠐⠒⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+`];
+
 export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
+
   const [showFooter, setShowFooter] = useState(false);
   const navigate = useNavigate();
 
   const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
+
+  const textDelay = RESULT_ROUTE_TEXT_DELAY_MS;
 
   const handleRetry = useCallback(() => {
     navigate({ to: '/game' });
   }, [navigate]);
 
   const handleShare = useCallback(async () => {
-    const shareText = getShareText(score);
+    const shareText = `I scored ${score} on HIGHER || PWNED_ - the password breach guessing game! Can you beat my score?`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: RESULT_ROUTE_SHARE_TITLE,
+          title: 'HIGHER || PWNED_',
           text: shareText,
         });
       } catch {
@@ -53,31 +226,29 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
     }
   }, [score]);
 
+  const asciiArt = useMemo(() => getRandomItem(ASCII_ART), []);
+
   return (
-    <div className='resultRouteContainer'>
+    <div className="container">
       <Header />
-      <main className='resultRouteMain'>
-        <div className='resultRouteScoreSection'>
-          <TerminalText text='score' duration={750} />
-          <TerminalText
-            text={score.toString()}
-            duration={750}
-            delay={RESULT_ROUTE_TEXT_DELAY_MS}
-          />
+      <main className="main">
+        <div className="scoreSection">
+          <TerminalText text='score' duration={500} />
+          <TerminalText text={score.toString()} duration={500} delay={textDelay} />
         </div>
 
-        <pre className='resultRouteAsciiArt'>{RESULT_ROUTE_ASCII_ART}</pre>
+        {/* <AsciiArtTyping text={asciiArt} duration={1000} delay={textDelay * 2} className="asciiArt" /> */}
+        <AsciiArtTyping text={ASCII_ART[ASCII_ART.length - 1] as string} duration={1000} delay={textDelay * 2} className="asciiArt" />
 
         <TerminalText
           text={sarcasticMessage}
-          duration={750}
-          delay={RESULT_ROUTE_TEXT_DELAY_MS}
-          className='resultRouteMessage'
+          duration={500}
+          delay={textDelay * 3}
           onAnimationEnd={() => setShowFooter(true)}
         />
 
-        {showFooter && (
-          <div className='resultRouteActions'>
+        {true && (
+          <div className="actions">
             <Button onClick={handleRetry}>retry</Button>
             <Button onClick={handleShare} variant='secondary'>
               share
@@ -87,4 +258,4 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
       </main>
     </div>
   );
-};
+}
