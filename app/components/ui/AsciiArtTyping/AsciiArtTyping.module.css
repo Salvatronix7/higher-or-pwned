@@ -1,5 +1,6 @@
 .asciiArtTyping {
   position: relative;
+  display: grid;
 }
 
 @keyframes ascii-art-reveal-columns {
