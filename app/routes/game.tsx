@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useCallback, useEffect, memo } from 'react';
+import { useCallback, useEffect, memo, useRef } from 'react';
 import type { FC } from 'react';
 import { useGame } from '~/hooks';
 import { PasswordCard } from '~/components';
@@ -42,13 +42,23 @@ function GamePage() {
     isLoading,
     gameResult,
     makeGuess,
+    startReveal,
   } = useGame();
+  const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleGuess = useCallback(
     (choice: GuessChoice) => {
-      makeGuess(choice);
+      if (!startReveal()) {
+        return;
+      }
+      if (revealTimeoutRef.current) {
+        clearTimeout(revealTimeoutRef.current);
+      }
+      revealTimeoutRef.current = setTimeout(() => {
+        makeGuess(choice);
+      }, 2000);
     },
-    [makeGuess],
+    [makeGuess, startReveal],
   );
 
   useEffect(() => {
@@ -62,6 +72,14 @@ function GamePage() {
     }
   }, [gameState, gameResult, navigate]);
 
+  useEffect(() => {
+    return () => {
+      if (revealTimeoutRef.current) {
+        clearTimeout(revealTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className={styles.container}>
       <Header />
@@ -72,6 +90,8 @@ function GamePage() {
             password={leftPassword}
             guess={() => handleGuess('left')}
             isLoading={isLoading}
+            isDisabled={gameState !== 'playing'}
+            showCount={gameState !== 'playing'}
             position='left'
           />
           <ScoreDisplay score={score} />
@@ -80,6 +100,8 @@ function GamePage() {
             password={rightPassword}
             guess={() => handleGuess('right')}
             isLoading={isLoading}
+            isDisabled={gameState !== 'playing'}
+            showCount={gameState !== 'playing'}
             position='right'
           />
         </div>
