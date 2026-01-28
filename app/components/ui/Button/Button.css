@@ -1,4 +1,4 @@
-.button {
+.buttonRoot {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,42 +8,42 @@
   transition: all var(--transition-fast);
 }
 
-.button:hover:not(:disabled) {
+.buttonRoot:hover:not(:disabled) {
   text-shadow: var(--glow-text);
   transform: scale(1.05);
 }
 
-.button:active:not(:disabled) {
+.buttonRoot:active:not(:disabled) {
   transform: scale(0.98);
 }
 
-.button:disabled {
+.buttonRoot:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.border {
+.buttonBorder {
   color: var(--color-terminal-green-dim);
   letter-spacing: 0.05em;
 }
 
-.content {
+.buttonContent {
   padding: var(--spacing-xs) var(--spacing-sm);
   font-size: var(--font-size-base);
 }
 
-.primary:hover:not(:disabled) .border {
+.buttonPrimary:hover:not(:disabled) .buttonBorder {
   color: var(--color-terminal-green);
 }
 
-.secondary {
+.buttonSecondary {
   color: var(--color-terminal-green-dim);
 }
 
-.secondary:hover:not(:disabled) {
+.buttonSecondary:hover:not(:disabled) {
   color: var(--color-terminal-green);
 }
 
-.secondary:hover:not(:disabled) .border {
+.buttonSecondary:hover:not(:disabled) .buttonBorder {
   color: var(--color-terminal-green);
 }

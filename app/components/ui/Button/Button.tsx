@@ -1,26 +1,27 @@
 import { memo } from 'react';
-import type { FC, ReactNode, MouseEvent } from 'react';
-import styles from './Button.module.css';
-
-interface ButtonProps {
-  readonly children: ReactNode;
-  readonly onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-  readonly variant?: 'primary' | 'secondary';
-  readonly disabled?: boolean;
-  readonly type?: 'button' | 'submit' | 'reset';
-}
+import type { FC } from 'react';
+import { DEFAULT_BUTTON_TYPE, DEFAULT_BUTTON_VARIANT } from './Button.constants';
+import type { ButtonProps } from './Button.types';
+import { getButtonClassName } from './Button.utils';
+import './Button.css';
 
 export const Button: FC<ButtonProps> = memo(
-  ({ children, onClick, variant = 'primary', disabled = false, type = 'button' }) => (
+  ({
+    children,
+    onClick,
+    variant = DEFAULT_BUTTON_VARIANT,
+    disabled = false,
+    type = DEFAULT_BUTTON_TYPE,
+  }) => (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${styles.button} ${styles[variant]}`}
+      className={getButtonClassName(variant)}
     >
-      <span className={styles.border}>--------</span>
-      <span className={styles.content}>[ {children} ]</span>
-      <span className={styles.border}>--------</span>
+      <span className='buttonBorder'>--------</span>
+      <span className='buttonContent'>[ {children} ]</span>
+      <span className='buttonBorder'>--------</span>
     </button>
   )
 );

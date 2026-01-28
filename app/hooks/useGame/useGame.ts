@@ -1,26 +1,10 @@
 import { useCallback, useState, useMemo } from 'react';
 import { usePwnedCount } from '~/queries';
-import { getRandomPassword } from '~/utils';
 import { MAX_ROUNDS_STAYED } from '~/constants';
-import type { GameState, Password, GuessChoice, GameResult } from '~/types';
-
-interface UseGameReturn {
-  readonly leftPassword: Password;
-  readonly rightPassword: Password;
-  readonly score: number;
-  readonly gameState: GameState;
-  readonly isLoading: boolean;
-  readonly gameResult: GameResult | null;
-  readonly makeGuess: (choice: GuessChoice) => void;
-  readonly startReveal: () => boolean;
-  readonly resetGame: () => void;
-}
-
-const createInitialPassword = (exclude: readonly string[] = []): Password => ({
-  value: getRandomPassword(exclude),
-  pwnedCount: null,
-  roundsStayed: 0,
-});
+import type { GameResult, GuessChoice, Password } from '~/types';
+import { INITIAL_GAME_STATE } from './useGame.constants';
+import type { UseGameReturn } from './useGame.types';
+import { createInitialPassword } from './useGame.utils';
 
 export const useGame = (): UseGameReturn => {
   const [leftPassword, setLeftPassword] = useState<Password>(() =>
@@ -33,7 +17,7 @@ export const useGame = (): UseGameReturn => {
     () => new Set([leftPassword.value, rightPassword.value])
   );
   const [score, setScore] = useState(0);
-  const [gameState, setGameState] = useState<GameState>('playing');
+  const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
 
   const leftQuery = usePwnedCount(leftPassword.value);
@@ -87,7 +71,7 @@ export const useGame = (): UseGameReturn => {
         return;
       }
 
-      setGameState('playing');
+      setGameState(INITIAL_GAME_STATE);
       const newScore = score + 1;
       setScore(newScore);
 
@@ -150,7 +134,7 @@ export const useGame = (): UseGameReturn => {
     setRightPassword(newRight);
     setUsedPasswords(new Set([newLeft.value, newRight.value]));
     setScore(0);
-    setGameState('playing');
+    setGameState(INITIAL_GAME_STATE);
     setGameResult(null);
   }, []);
 

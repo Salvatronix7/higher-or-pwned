@@ -1,0 +1,1 @@
+export const TERMINAL_TEXT_DURATION = 750;
