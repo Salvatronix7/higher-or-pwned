@@ -1,3 +1,15 @@
+export const GAME_STATES = {
+  IDLE: 'idle',
+  PLAYING: 'playing',
+  REVEALING: 'revealing',
+  GAME_OVER: 'gameOver',
+} as const;
+
+export const GUESS_CHOICES = {
+  LEFT: 'left',
+  RIGHT: 'right',
+} as const;
+
 export const PASSWORD_LIST = [
   '123456',
   'password',

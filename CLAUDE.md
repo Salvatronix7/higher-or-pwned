@@ -1052,6 +1052,102 @@ When working on this project:
 8. **Keep components pure** - extract logic into hooks/services
 9. **Write tests** for all business logic and queries
 
+### No Magic Strings
+
+**Never use hardcoded string literals directly in code.** All strings should be defined as constants.
+
+#### What are Magic Strings?
+
+Magic strings are hardcoded string literals that appear directly in code without being defined as named constants. They make code harder to maintain, refactor, and understand.
+
+#### Categories of Strings to Extract
+
+| Category | Location | Example |
+|----------|----------|---------|
+| Route paths | `app/constants/routes.constants.ts` | `'/game'`, `'/result'` |
+| Game states | `app/constants/game.constants.ts` | `'playing'`, `'gameOver'` |
+| UI text | `app/constants/ui.constants.ts` | `'HIGHER \|\| PWNED'`, `'SCORE'` |
+| API config | `app/constants/api.constants.ts` | Base URLs, headers |
+| Timing | `app/constants/timing.constants.ts` | Animation durations |
+
+#### Examples
+
+```typescript
+// ❌ Bad - Magic strings
+const handleNavigation = () => {
+  navigate({ to: '/game' });
+};
+
+if (gameState === 'playing') {
+  // ...
+}
+
+<TerminalText text='HIGHER || PWNED' duration={750} />
+```
+
+```typescript
+// ✅ Good - Named constants
+// app/constants/routes.constants.ts
+export const ROUTES = {
+  HOME: '/',
+  GAME: '/game',
+  RESULT: '/result',
+} as const;
+
+// app/constants/game.constants.ts
+export const GAME_STATES = {
+  IDLE: 'idle',
+  PLAYING: 'playing',
+  REVEALING: 'revealing',
+  GAME_OVER: 'gameOver',
+} as const;
+
+// app/constants/ui.constants.ts
+export const UI_TEXT = {
+  APP_TITLE: 'HIGHER || PWNED',
+  SCORE_LABEL: 'SCORE',
+} as const;
+
+// app/constants/timing.constants.ts
+export const TIMING = {
+  TERMINAL_TEXT_DURATION: 750,
+  REVEAL_DELAY: 2000,
+} as const;
+
+// Usage
+import { ROUTES } from '~/constants';
+import { GAME_STATES } from '~/constants';
+import { UI_TEXT, TIMING } from '~/constants';
+
+navigate({ to: ROUTES.GAME });
+
+if (gameState === GAME_STATES.PLAYING) {
+  // ...
+}
+
+<TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
+```
+
+#### Constants File Structure
+
+```
+app/constants/
+├── index.ts              # Re-exports all constants
+├── game.constants.ts     # Game-specific constants (passwords, states, etc.)
+├── routes.constants.ts   # Route paths
+├── ui.constants.ts       # UI text, labels, messages
+├── api.constants.ts      # API URLs, headers, endpoints
+└── timing.constants.ts   # Animation durations, delays
+```
+
+#### Benefits
+
+- **Single source of truth** - Change a string in one place
+- **Type safety** - Use `as const` for literal types
+- **Discoverability** - Easy to find all strings in one place
+- **Refactoring** - IDE can rename across codebase
+- **No typos** - Compiler catches misspelled constant names
+
 ### Anti-patterns to Avoid
 
 - ❌ Using `any` type
@@ -1065,6 +1161,7 @@ When working on this project:
 - ❌ Creating new objects/functions in render without memoization
 - ❌ Not using query key factory
 - ❌ Over-memoizing simple components
+- ❌ Using magic strings (hardcoded string literals)
 
 ---
 

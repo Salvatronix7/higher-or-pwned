@@ -1,23 +1,23 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useCallback, useEffect } from 'react';
 import { TerminalText } from '../components/ui/TerminalText';
+import { ROUTES, UI_TEXT, KEYBOARD_KEYS, TIMING } from '~/constants';
 import styles from './index.module.css';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute(ROUTES.HOME)({
   component: WelcomePage,
 });
 
 function WelcomePage() {
   const navigate = useNavigate();
-  const textDelay = 750;
 
   const handleStart = useCallback(() => {
-    navigate({ to: '/game' });
+    navigate({ to: ROUTES.GAME });
   }, [navigate]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (event.key === KEYBOARD_KEYS.ENTER || event.key === KEYBOARD_KEYS.SPACE) {
         handleStart();
       }
     },
@@ -34,14 +34,14 @@ function WelcomePage() {
       <div className={styles.content}>
         <h1 className={styles.title}>
           <span className={styles.glow}>
-            <TerminalText text='HIGHER || PWNED' duration={750} />
+            <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
           </span>
         </h1>
         <span className={styles.prompt}>
           <TerminalText
-            text='> press any key to start'
-            duration={750}
-            delay={textDelay}
+            text={UI_TEXT.START_PROMPT}
+            duration={TIMING.TERMINAL_TEXT_DURATION}
+            delay={TIMING.TERMINAL_TEXT_DURATION}
           />
         </span>
       </div>

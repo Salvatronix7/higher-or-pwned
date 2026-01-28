@@ -3,17 +3,24 @@ import { useCallback, useEffect, memo, useRef } from 'react';
 import type { FC } from 'react';
 import { useGame } from '~/hooks';
 import { PasswordCard } from '~/components';
+import {
+  ROUTES,
+  GAME_STATES,
+  GUESS_CHOICES,
+  UI_TEXT,
+  TIMING,
+} from '~/constants';
 import type { GuessChoice } from '~/types';
 import styles from './game.module.css';
 import { TerminalText } from '~/components/ui/TerminalText';
 
-export const Route = createFileRoute('/game')({
+export const Route = createFileRoute(ROUTES.GAME)({
   component: GamePage,
 });
 
 const Header: FC = memo(() => (
   <header className={styles.header}>
-    <TerminalText text='HIGHER || PWNED' duration={750} />
+    <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
   </header>
 ));
 
@@ -25,7 +32,7 @@ interface ScoreDisplayProps {
 
 const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
   <div className={styles.scoreContainer}>
-    <span className={styles.scoreLabel}>SCORE</span>
+    <span className={styles.scoreLabel}>{UI_TEXT.SCORE_LABEL}</span>
     <span className={styles.scoreValue}>{score}</span>
   </div>
 ));
@@ -56,15 +63,15 @@ function GamePage() {
       }
       revealTimeoutRef.current = setTimeout(() => {
         makeGuess(choice);
-      }, 2000);
+      }, TIMING.REVEAL_DELAY);
     },
     [makeGuess, startReveal],
   );
 
   useEffect(() => {
-    if (gameState === 'gameOver' && gameResult) {
+    if (gameState === GAME_STATES.GAME_OVER && gameResult) {
       navigate({
-        to: '/result',
+        to: ROUTES.RESULT,
         search: {
           score: gameResult.score,
         },
@@ -88,25 +95,25 @@ function GamePage() {
           <PasswordCard
             key={leftPassword.value}
             password={leftPassword}
-            guess={() => handleGuess('left')}
+            guess={() => handleGuess(GUESS_CHOICES.LEFT)}
             isLoading={isLoading}
-            isDisabled={gameState !== 'playing'}
-            showCount={gameState !== 'playing'}
-            position='left'
+            isDisabled={gameState !== GAME_STATES.PLAYING}
+            showCount={gameState !== GAME_STATES.PLAYING}
+            position={GUESS_CHOICES.LEFT}
           />
           <ScoreDisplay score={score} />
           <PasswordCard
             key={rightPassword.value}
             password={rightPassword}
-            guess={() => handleGuess('right')}
+            guess={() => handleGuess(GUESS_CHOICES.RIGHT)}
             isLoading={isLoading}
-            isDisabled={gameState !== 'playing'}
-            showCount={gameState !== 'playing'}
-            position='right'
+            isDisabled={gameState !== GAME_STATES.PLAYING}
+            showCount={gameState !== GAME_STATES.PLAYING}
+            position={GUESS_CHOICES.RIGHT}
           />
         </div>
         <p className={styles.instruction}>
-          {'>'} click the password with MORE breaches_
+          {UI_TEXT.GAME_INSTRUCTION}
         </p>
       </main>
     </div>

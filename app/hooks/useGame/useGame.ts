@@ -1,6 +1,6 @@
 import { useCallback, useState, useMemo } from 'react';
 import { usePwnedCount } from '~/queries';
-import { MAX_ROUNDS_STAYED } from '~/constants';
+import { MAX_ROUNDS_STAYED, GAME_STATES, GUESS_CHOICES } from '~/constants';
 import type { GameResult, GuessChoice, Password } from '~/types';
 import { INITIAL_GAME_STATE } from './useGame.constants';
 import type { UseGameReturn } from './useGame.types';
@@ -42,26 +42,26 @@ export const useGame = (): UseGameReturn => {
   );
 
   const startReveal = useCallback(() => {
-    if (isLoading || gameState !== 'playing') {
+    if (isLoading || gameState !== GAME_STATES.PLAYING) {
       return false;
     }
-    setGameState('revealing');
+    setGameState(GAME_STATES.REVEALING);
     return true;
   }, [gameState, isLoading]);
 
   const makeGuess = useCallback(
     (choice: GuessChoice) => {
-      if (isLoading || gameState === 'gameOver') return;
+      if (isLoading || gameState === GAME_STATES.GAME_OVER) return;
 
       const leftCount = leftQuery.data ?? 0;
       const rightCount = rightQuery.data ?? 0;
 
       const correctChoice: GuessChoice =
-        leftCount >= rightCount ? 'left' : 'right';
+        leftCount >= rightCount ? GUESS_CHOICES.LEFT : GUESS_CHOICES.RIGHT;
       const isCorrect = choice === correctChoice;
 
       if (!isCorrect) {
-        setGameState('gameOver');
+        setGameState(GAME_STATES.GAME_OVER);
         setGameResult({
           score,
           lastLeftPassword: leftPassword.value,
@@ -79,8 +79,8 @@ export const useGame = (): UseGameReturn => {
       updatedUsed.add(leftPassword.value);
       updatedUsed.add(rightPassword.value);
 
-      const winner = choice === 'left' ? leftPassword : rightPassword;
-      const winnerCount = choice === 'left' ? leftCount : rightCount;
+      const winner = choice === GUESS_CHOICES.LEFT ? leftPassword : rightPassword;
+      const winnerCount = choice === GUESS_CHOICES.LEFT ? leftCount : rightCount;
       const newRoundsStayed = winner.roundsStayed + 1;
 
       if (newRoundsStayed > MAX_ROUNDS_STAYED) {
@@ -106,7 +106,7 @@ export const useGame = (): UseGameReturn => {
       ]);
       updatedUsed.add(newChallenger.value);
 
-      if (choice === 'left') {
+      if (choice === GUESS_CHOICES.LEFT) {
         setLeftPassword(updatedWinner);
         setRightPassword(newChallenger);
       } else {

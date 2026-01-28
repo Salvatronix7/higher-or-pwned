@@ -3,7 +3,14 @@ import { useCallback, useMemo, memo, useState } from 'react';
 import type { FC } from 'react';
 import { Button } from '~/components';
 import { getRandomItem } from '~/utils';
-import { SARCASTIC_MESSAGES } from '~/constants';
+import {
+  ROUTES,
+  SARCASTIC_MESSAGES,
+  UI_TEXT,
+  TIMING,
+  RESULT_ASCII_ART,
+  createShareText,
+} from '~/constants';
 import styles from './result.module.css';
 import { TerminalText } from '~/components/ui/TerminalText';
 
@@ -11,31 +18,16 @@ interface ResultSearchParams {
   score: number;
 }
 
-export const Route = createFileRoute('/result')({
+export const Route = createFileRoute(ROUTES.RESULT)({
   validateSearch: (search: Record<string, unknown>): ResultSearchParams => ({
     score: Number(search.score) || 0,
   }),
   component: ResultPage,
 });
 
-const ASCII_ART = `
-          .-"""-.
-         /        \\
-        /_        _\\
-       // \\      / \\\\
-       |\\__\\    /__/|
-       \\    ||    /
-        \\        /
-         \\  __  /
-          '.__.'
-           |  |
-          /|  |\\
-         (_|  |_)
-`;
-
 const Header: FC = memo(() => (
   <header className={styles.header}>
-    <TerminalText text='HIGHER || PWNED' duration={750} />
+    <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
   </header>
 ));
 
@@ -45,21 +37,20 @@ function ResultPage() {
   const [showFooter, setShowFooter] = useState(false);
   const navigate = useNavigate();
   const { score } = Route.useSearch();
-  const textDelay = 750;
 
   const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
 
   const handleRetry = useCallback(() => {
-    navigate({ to: '/game' });
+    navigate({ to: ROUTES.GAME });
   }, [navigate]);
 
   const handleShare = useCallback(async () => {
-    const shareText = `I scored ${score} on HIGHER || PWNED_ - the password breach guessing game! Can you beat my score?`;
+    const shareText = createShareText(score);
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'HIGHER || PWNED_',
+          title: UI_TEXT.SHARE_TITLE,
           text: shareText,
         });
       } catch {
@@ -75,24 +66,24 @@ function ResultPage() {
       <Header />
       <main className={styles.main}>
         <div className={styles.scoreSection}>
-          <TerminalText text='score' duration={750} />
-          <TerminalText text={score.toString()} duration={750} delay={textDelay} />
+          <TerminalText text={UI_TEXT.SCORE_LABEL.toLowerCase()} duration={TIMING.TERMINAL_TEXT_DURATION} />
+          <TerminalText text={score.toString()} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION} />
         </div>
 
-        <pre className={styles.asciiArt}>{ASCII_ART}</pre>
+        <pre className={styles.asciiArt}>{RESULT_ASCII_ART}</pre>
 
         <TerminalText
           text={sarcasticMessage}
-          duration={750}
-          delay={textDelay}
+          duration={TIMING.TERMINAL_TEXT_DURATION}
+          delay={TIMING.TERMINAL_TEXT_DURATION}
           onAnimationEnd={() => setShowFooter(true)}
         />
 
         {showFooter && (
           <div className={styles.actions}>
-            <Button onClick={handleRetry}>retry</Button>
+            <Button onClick={handleRetry}>{UI_TEXT.RETRY_BUTTON}</Button>
             <Button onClick={handleShare} variant='secondary'>
-              share
+              {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
         )}
