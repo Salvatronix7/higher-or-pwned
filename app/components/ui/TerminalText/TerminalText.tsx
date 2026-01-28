@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import type { FC, CSSProperties } from 'react';
 import styles from './TerminalText.module.css';
 
@@ -12,16 +12,28 @@ interface TerminalTextProps {
 
 export const TerminalText: FC<TerminalTextProps> = memo(
   ({ text, duration = 2000, delay = 0, onAnimationEnd, className }) => {
-    const [showCaret, setShowCaret] = useState(true);
+    const [showCaret, setShowCaret] = useState(delay === 0);
     const style: CSSProperties = {
       '--terminal-text-duration': `${duration}ms`,
       '--terminal-text-delay': `${delay}ms`,
       '--terminal-text-length': `${text.length}`,
     } as CSSProperties;
 
-    const handleAnimationEnd = (
-      event: React.AnimationEvent<HTMLSpanElement>,
-    ) => {
+    useEffect(() => {
+      setShowCaret(delay === 0);
+
+      if (delay === 0) {
+        return;
+      }
+
+      const timeout = window.setTimeout(() => {
+        setShowCaret(true);
+      }, delay);
+
+      return () => window.clearTimeout(timeout);
+    }, [delay]);
+
+    const handleAnimationEnd = () => {
       setShowCaret(false);
       onAnimationEnd && onAnimationEnd();
     };
