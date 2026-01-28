@@ -28,6 +28,9 @@ export const useGame = (): UseGameReturn => {
   const [rightPassword, setRightPassword] = useState<Password>(() =>
     createInitialPassword([leftPassword.value])
   );
+  const [usedPasswords, setUsedPasswords] = useState<Set<string>>(
+    () => new Set([leftPassword.value, rightPassword.value])
+  );
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<GameState>('playing');
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
@@ -78,33 +81,45 @@ export const useGame = (): UseGameReturn => {
       const newScore = score + 1;
       setScore(newScore);
 
+      const updatedUsed = new Set(usedPasswords);
+      updatedUsed.add(leftPassword.value);
+      updatedUsed.add(rightPassword.value);
+
       const winner = choice === 'left' ? leftPassword : rightPassword;
       const winnerCount = choice === 'left' ? leftCount : rightCount;
       const newRoundsStayed = winner.roundsStayed + 1;
 
       if (newRoundsStayed > MAX_ROUNDS_STAYED) {
-        const newLeft = createInitialPassword();
-        const newRight = createInitialPassword([newLeft.value]);
+        const newLeft = createInitialPassword([...updatedUsed]);
+        const newRight = createInitialPassword([...updatedUsed, newLeft.value]);
+        updatedUsed.add(newLeft.value);
+        updatedUsed.add(newRight.value);
         setLeftPassword(newLeft);
         setRightPassword(newRight);
-      } else {
-        const updatedWinner: Password = {
-          value: winner.value,
-          pwnedCount: winnerCount,
-          roundsStayed: newRoundsStayed,
-        };
-
-        const existingPasswords = [leftPassword.value, rightPassword.value];
-        const newChallenger = createInitialPassword(existingPasswords);
-
-        if (choice === 'left') {
-          setLeftPassword(updatedWinner);
-          setRightPassword(newChallenger);
-        } else {
-          setLeftPassword(newChallenger);
-          setRightPassword(updatedWinner);
-        }
+        setUsedPasswords(updatedUsed);
+        return;
       }
+
+      const updatedWinner: Password = {
+        value: winner.value,
+        pwnedCount: winnerCount,
+        roundsStayed: newRoundsStayed,
+      };
+
+      const newChallenger = createInitialPassword([
+        ...updatedUsed,
+        updatedWinner.value,
+      ]);
+      updatedUsed.add(newChallenger.value);
+
+      if (choice === 'left') {
+        setLeftPassword(updatedWinner);
+        setRightPassword(newChallenger);
+      } else {
+        setLeftPassword(newChallenger);
+        setRightPassword(updatedWinner);
+      }
+      setUsedPasswords(updatedUsed);
     },
     [
       isLoading,
@@ -114,6 +129,7 @@ export const useGame = (): UseGameReturn => {
       leftPassword,
       rightPassword,
       score,
+      usedPasswords,
     ]
   );
 
@@ -122,6 +138,7 @@ export const useGame = (): UseGameReturn => {
     const newRight = createInitialPassword([newLeft.value]);
     setLeftPassword(newLeft);
     setRightPassword(newRight);
+    setUsedPasswords(new Set([newLeft.value, newRight.value]));
     setScore(0);
     setGameState('playing');
     setGameResult(null);
