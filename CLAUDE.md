@@ -9,11 +9,12 @@ This document provides guidance for AI assistants working on this codebase.
 ### Tech Stack
 
 - **Framework**: [TanStack Start](https://tanstack.com/start) (React full-stack framework)
+- **Rendering**: Static Site Generation (SSG) / Server-Side Rendering (SSR)
 - **Data Fetching**: [TanStack Query](https://tanstack.com/query) (server state management)
 - **Routing**: [TanStack Router](https://tanstack.com/router) (type-safe routing)
 - **Language**: TypeScript (strict mode)
 - **Paradigm**: Functional Programming
-- **Styling**: CSS/Tailwind (TBD)
+- **Styling**: CSS (vanilla CSS with CSS Modules)
 
 ### Current State
 
@@ -498,6 +499,198 @@ npm run build
 npm run start
 ```
 
+### Static/Server-Side Rendering Strategy
+
+This application uses **Static Site Generation (SSG)** with **Server-Side Rendering (SSR)** for optimal performance and SEO.
+
+#### Configuration
+
+```typescript
+// app.config.ts
+import { defineConfig } from '@tanstack/start/config';
+
+export default defineConfig({
+  server: {
+    preset: 'static', // Generate static HTML at build time
+  },
+});
+```
+
+#### Route-level SSR/SSG
+
+```typescript
+// app/routes/index.tsx
+export const Route = createFileRoute('/')({
+  // Data loaded on server, HTML pre-rendered
+  loader: async () => {
+    return {
+      breaches: await breachesApi.getFeatured(),
+    };
+  },
+  // Static params for SSG
+  staticData: {
+    prerender: true,
+  },
+});
+```
+
+#### Benefits
+
+| Benefit | Description |
+|---------|-------------|
+| **SEO** | Pre-rendered HTML for search engines |
+| **Performance** | Fast initial page load (no JS required for content) |
+| **Caching** | Static assets cached at CDN edge |
+| **Reliability** | Works without JavaScript enabled |
+
+#### Best Practices
+
+- Pre-render all public pages at build time
+- Use SSR for dynamic/personalized content
+- Implement proper loading states for client-side hydration
+- Leverage route loaders for data fetching before render
+
+### CSS Styling Guidelines
+
+This project uses **vanilla CSS with CSS Modules** for component styling.
+
+#### File Structure
+
+```
+app/
+├── components/
+│   ├── GameBoard/
+│   │   ├── GameBoard.tsx
+│   │   ├── GameBoard.module.css    # Component styles
+│   │   └── index.ts
+│   └── ui/
+│       ├── Button/
+│       │   ├── Button.tsx
+│       │   └── Button.module.css
+│       └── Card/
+│           ├── Card.tsx
+│           └── Card.module.css
+├── styles/
+│   ├── globals.css                 # Global styles, CSS reset
+│   ├── variables.css               # CSS custom properties
+│   └── utils.css                   # Utility classes
+```
+
+#### CSS Modules Usage
+
+```typescript
+// GameBoard.tsx
+import styles from './GameBoard.module.css';
+
+export const GameBoard: FC<GameBoardProps> = ({ breaches }) => (
+  <div className={styles.container}>
+    <h2 className={styles.title}>Choose wisely</h2>
+    <div className={styles.cardsWrapper}>
+      {breaches.map((breach) => (
+        <BreachCard key={breach.id} breach={breach} />
+      ))}
+    </div>
+  </div>
+);
+```
+
+```css
+/* GameBoard.module.css */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-lg);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.cardsWrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+```
+
+#### CSS Custom Properties (variables.css)
+
+```css
+:root {
+  /* Colors */
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-background: #0f0f0f;
+  --color-surface: #1a1a1a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Typography */
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+}
+```
+
+#### CSS Best Practices
+
+| Practice | Description |
+|----------|-------------|
+| Use CSS Modules | Scoped styles, no class name collisions |
+| CSS Custom Properties | Consistent theming, easy dark mode |
+| Mobile-first | Start with mobile styles, add breakpoints |
+| BEM-like naming | Clear, descriptive class names in modules |
+| Avoid `!important` | Specificity should be managed properly |
+| Logical properties | Use `margin-inline`, `padding-block` for RTL support |
+
+#### Responsive Design
+
+```css
+/* Mobile-first approach */
+.card {
+  width: 100%;
+  padding: var(--spacing-md);
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .card {
+    width: 50%;
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .card {
+    width: 33.333%;
+  }
+}
+```
+
 ### TypeScript Best Practices
 
 #### Strict Configuration
@@ -877,6 +1070,8 @@ When working on this project:
 
 *Last updated: 2026-01-28*
 *Framework: TanStack Start*
+*Rendering: Static (SSG) / Server-Side (SSR)*
 *Data Fetching: TanStack Query*
+*Styling: CSS Modules*
 *Language: TypeScript (Strict)*
 *Paradigm: Functional Programming*
