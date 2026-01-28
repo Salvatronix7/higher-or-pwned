@@ -1,0 +1,56 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  user-select: none;
+}
+
+.content {
+  text-align: center;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: normal;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--spacing-xl);
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+.glow {
+  text-shadow: var(--glow-text);
+}
+
+.separator {
+  color: var(--color-terminal-green-dim);
+}
+
+.cursor {
+  color: var(--color-terminal-green);
+  text-shadow: var(--glow-text);
+}
+
+.prompt {
+  font-size: var(--font-size-base);
+  color: var(--color-terminal-green-dim);
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0.5;
+  }
+}
