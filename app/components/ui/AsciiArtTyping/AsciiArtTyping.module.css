@@ -1,0 +1,16 @@
+.asciiArtTyping {
+  display: inline-block;
+  clip-path: inset(0 100% 0 0);
+  animation: ascii-art-typing var(--ascii-art-duration, 2000ms)
+    steps(var(--ascii-art-length, 40), end) forwards;
+  animation-delay: var(--ascii-art-delay, 0ms);
+}
+
+@keyframes ascii-art-typing {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
