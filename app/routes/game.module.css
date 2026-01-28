@@ -1,0 +1,86 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+}
+
+.header {
+  text-align: center;
+  padding: var(--spacing-md) 0;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: normal;
+  letter-spacing: 0.1em;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: var(--font-size-xl);
+  }
+}
+
+.glow {
+  text-shadow: var(--glow-text);
+}
+
+.separator {
+  color: var(--color-terminal-green-dim);
+}
+
+.cursor {
+  color: var(--color-terminal-green);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gameBoard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .gameBoard {
+    flex-direction: row;
+  }
+}
+
+.scoreContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--color-background);
+  padding: var(--spacing-md);
+  z-index: 10;
+}
+
+.scoreLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-terminal-green-dim);
+  letter-spacing: 0.2em;
+}
+
+.scoreValue {
+  font-size: var(--font-size-2xl);
+  color: var(--color-terminal-green);
+  text-shadow: var(--glow-text);
+}
+
+.instruction {
+  text-align: center;
+  padding: var(--spacing-md);
+  color: var(--color-terminal-green-dim);
+  font-size: var(--font-size-sm);
+}

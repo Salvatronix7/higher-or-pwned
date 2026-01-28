@@ -1,0 +1,47 @@
+:root {
+  /* Terminal Colors */
+  --color-background: #0c0c0c;
+  --color-surface: #111111;
+  --color-terminal-green: #0f0;
+  --color-terminal-green-dim: #0a0;
+  --color-terminal-green-glow: rgba(0, 255, 0, 0.3);
+  --color-text-primary: #0f0;
+  --color-text-secondary: #0a0;
+  --color-border: #0f0;
+  --color-border-dim: #060;
+  --color-error: #f00;
+  --color-success: #0f0;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+
+  /* Typography */
+  --font-family-mono: 'Share Tech Mono', 'Courier New', Courier, monospace;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+
+  /* Border */
+  --border-width: 2px;
+  --border-style: dashed;
+  --border-terminal: var(--border-width) var(--border-style) var(--color-border);
+
+  /* Effects */
+  --glow-text: 0 0 10px var(--color-terminal-green-glow),
+    0 0 20px var(--color-terminal-green-glow),
+    0 0 30px var(--color-terminal-green-glow);
+  --glow-box: 0 0 5px var(--color-terminal-green-glow),
+    0 0 10px var(--color-terminal-green-glow);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+}
