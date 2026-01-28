@@ -12,6 +12,7 @@ interface UseGameReturn {
   readonly isLoading: boolean;
   readonly gameResult: GameResult | null;
   readonly makeGuess: (choice: GuessChoice) => void;
+  readonly startReveal: () => boolean;
   readonly resetGame: () => void;
 }
 
@@ -53,9 +54,17 @@ export const useGame = (): UseGameReturn => {
     [rightPassword, rightQuery.data]
   );
 
+  const startReveal = useCallback(() => {
+    if (isLoading || gameState !== 'playing') {
+      return false;
+    }
+    setGameState('revealing');
+    return true;
+  }, [gameState, isLoading]);
+
   const makeGuess = useCallback(
     (choice: GuessChoice) => {
-      if (isLoading || gameState !== 'playing') return;
+      if (isLoading || gameState === 'gameOver') return;
 
       const leftCount = leftQuery.data ?? 0;
       const rightCount = rightQuery.data ?? 0;
@@ -75,6 +84,7 @@ export const useGame = (): UseGameReturn => {
         return;
       }
 
+      setGameState('playing');
       const newScore = score + 1;
       setScore(newScore);
 
@@ -135,6 +145,7 @@ export const useGame = (): UseGameReturn => {
     isLoading,
     gameResult,
     makeGuess,
+    startReveal,
     resetGame,
   };
 };
