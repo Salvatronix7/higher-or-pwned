@@ -4,6 +4,7 @@ import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [react(), viteTsConfigPaths()],
+  base: '/higher-or-pwned/',
   server: {
     port: 3000,
   },
