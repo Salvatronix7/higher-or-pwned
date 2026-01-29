@@ -1,0 +1,12 @@
+.firePre {
+  margin: 0;
+  padding: 12px;
+  font-family: 'Fira Code', 'SFMono-Regular', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.1;
+  color: #ffb86b;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 184, 107, 0.35);
+  border-radius: 8px;
+  white-space: pre;
+}
