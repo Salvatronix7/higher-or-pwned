@@ -1,0 +1,21 @@
+.fireSimulation {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  font-family: "Fira Code", "Fira Mono", "SFMono-Regular", ui-monospace,
+    "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: var(--fire-cell-size, 12px);
+  line-height: var(--fire-cell-size, 12px);
+  letter-spacing: 0;
+  white-space: pre;
+  user-select: none;
+  color: #fbbf24;
+  background: #0a0a0a;
+  width: calc(var(--fire-size) * var(--fire-cell-size));
+  height: calc(var(--fire-size) * var(--fire-cell-size));
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.35);
+}
