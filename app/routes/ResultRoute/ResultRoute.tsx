@@ -3,9 +3,14 @@ import type { FC } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { AsciiArtTyping, Button } from "~/components";
 import { TerminalText } from "~/components/ui/TerminalText";
-import { SARCASTIC_MESSAGES } from "~/constants";
+import {
+  ROUTES,
+  SARCASTIC_MESSAGES,
+  UI_TEXT,
+  TIMING,
+  createShareText,
+} from "~/constants";
 import { getRandomItem } from "~/utils";
-import { RESULT_ROUTE_TEXT_DELAY_MS, RESULT_ROUTE_TITLE_TEXT } from "./ResultRoute.constants";
 import "./ResultRoute.css";
 
 interface ResultRouteProps {
@@ -14,7 +19,7 @@ interface ResultRouteProps {
 
 const Header: FC = memo(() => (
   <header className="resultRouteHeader">
-    <TerminalText text={RESULT_ROUTE_TITLE_TEXT} duration={500} />
+    <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
   </header>
 ));
 
@@ -199,19 +204,17 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
   const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
 
-  const textDelay = RESULT_ROUTE_TEXT_DELAY_MS;
-
   const handleRetry = useCallback(() => {
-    navigate({ to: "/game" });
+    navigate({ to: ROUTES.GAME });
   }, [navigate]);
 
   const handleShare = useCallback(async () => {
-    const shareText = `I scored ${score} on HIGHER || PWNED_ - the password breach guessing game! Can you beat my score?`;
+    const shareText = createShareText(score);
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "HIGHER || PWNED_",
+          title: UI_TEXT.SHARE_TITLE,
           text: shareText,
         });
       } catch {
@@ -229,19 +232,19 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
       <Header />
       <main className="main">
         <div className="scoreSection">
-          <TerminalText text="score" duration={500} />
-          <TerminalText text={score.toString()} duration={500} delay={textDelay} />
+          <TerminalText text={UI_TEXT.SCORE_LABEL.toLowerCase()} duration={TIMING.TERMINAL_TEXT_DURATION} />
+          <TerminalText text={score.toString()} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION} />
         </div>
 
-        <AsciiArtTyping text={asciiArt} duration={1000} delay={textDelay * 2} className="asciiArt" />
+        <AsciiArtTyping text={asciiArt} duration={TIMING.ASCII_ART_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 2} className="asciiArt" />
 
-        <TerminalText text={sarcasticMessage} duration={500} delay={textDelay * 3} onAnimationEnd={() => setShowFooter(true)} />
+        <TerminalText text={sarcasticMessage} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 3} onAnimationEnd={() => setShowFooter(true)} />
 
         {true && (
           <div className="actions">
-            <Button onClick={handleRetry}>retry</Button>
+            <Button onClick={handleRetry}>{UI_TEXT.RETRY_BUTTON}</Button>
             <Button onClick={handleShare} variant="secondary">
-              share
+              {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
         )}

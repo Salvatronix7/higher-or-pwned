@@ -1,6 +1,5 @@
 import { getPasswordHash } from '~/utils';
-
-const HIBP_API_BASE = 'https://api.pwnedpasswords.com';
+import { API, API_HEADERS } from '~/constants';
 
 interface PwnedRangeResult {
   readonly suffix: string;
@@ -23,9 +22,9 @@ const fetchPwnedRange = async (
   prefix: string,
   signal?: AbortSignal
 ): Promise<readonly PwnedRangeResult[]> => {
-  const response = await fetch(`${HIBP_API_BASE}/range/${prefix}`, {
+  const response = await fetch(`${API.HIBP_BASE_URL}${API.HIBP_RANGE_ENDPOINT}${prefix}`, {
     headers: {
-      'Add-Padding': 'true',
+      [API_HEADERS.ADD_PADDING]: API_HEADERS.TRUE,
     },
     signal,
   });

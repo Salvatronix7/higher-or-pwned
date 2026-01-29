@@ -4,18 +4,20 @@ import { useNavigate } from '@tanstack/react-router';
 import { PasswordCard } from '~/components';
 import { TerminalText } from '~/components/ui/TerminalText';
 import { useGame } from '~/hooks';
-import type { GuessChoice } from '~/types';
 import {
-  GAME_ROUTE_REVEAL_DELAY_MS,
-  GAME_ROUTE_TITLE_TEXT,
-} from './GameRoute.constants';
+  ROUTES,
+  GAME_STATES,
+  GUESS_CHOICES,
+  UI_TEXT,
+  TIMING,
+} from '~/constants';
+import type { GuessChoice } from '~/types';
 import type { ScoreDisplayProps } from './GameRoute.types';
-import { getGameInstructionText } from './GameRoute.utils';
 import './GameRoute.css';
 
 const Header: FC = memo(() => (
   <header className='gameRouteHeader'>
-    <TerminalText text={GAME_ROUTE_TITLE_TEXT} duration={750} />
+    <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
   </header>
 ));
 
@@ -23,7 +25,7 @@ Header.displayName = 'Header';
 
 const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
   <div className='gameRouteScoreContainer'>
-    <span className='gameRouteScoreLabel'>SCORE</span>
+    <span className='gameRouteScoreLabel'>{UI_TEXT.SCORE_LABEL}</span>
     <span className='gameRouteScoreValue'>{score}</span>
   </div>
 ));
@@ -54,15 +56,15 @@ export const GameRoute: FC = () => {
       }
       revealTimeoutRef.current = setTimeout(() => {
         makeGuess(choice);
-      }, GAME_ROUTE_REVEAL_DELAY_MS);
+      }, TIMING.REVEAL_DELAY);
     },
     [makeGuess, startReveal],
   );
 
   useEffect(() => {
-    if (gameState === 'gameOver' && gameResult) {
+    if (gameState === GAME_STATES.GAME_OVER && gameResult) {
       navigate({
-        to: '/result',
+        to: ROUTES.RESULT,
         search: {
           score: gameResult.score,
         },
@@ -86,24 +88,24 @@ export const GameRoute: FC = () => {
           <PasswordCard
             key={leftPassword.value}
             password={leftPassword}
-            guess={() => handleGuess('left')}
+            guess={() => handleGuess(GUESS_CHOICES.LEFT)}
             isLoading={isLoading}
-            isDisabled={gameState !== 'playing'}
-            showCount={gameState !== 'playing'}
-            position='left'
+            isDisabled={gameState !== GAME_STATES.PLAYING}
+            showCount={gameState !== GAME_STATES.PLAYING}
+            position={GUESS_CHOICES.LEFT}
           />
           <ScoreDisplay score={score} />
           <PasswordCard
             key={rightPassword.value}
             password={rightPassword}
-            guess={() => handleGuess('right')}
+            guess={() => handleGuess(GUESS_CHOICES.RIGHT)}
             isLoading={isLoading}
-            isDisabled={gameState !== 'playing'}
-            showCount={gameState !== 'playing'}
-            position='right'
+            isDisabled={gameState !== GAME_STATES.PLAYING}
+            showCount={gameState !== GAME_STATES.PLAYING}
+            position={GUESS_CHOICES.RIGHT}
           />
         </div>
-        <p className='gameRouteInstruction'>{getGameInstructionText()}</p>
+        <p className='gameRouteInstruction'>{UI_TEXT.GAME_INSTRUCTION}</p>
       </main>
     </div>
   );

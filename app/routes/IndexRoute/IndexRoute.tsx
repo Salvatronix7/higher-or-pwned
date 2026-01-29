@@ -2,11 +2,7 @@ import { useCallback, useEffect } from 'react';
 import type { FC } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { TerminalText } from '~/components/ui/TerminalText';
-import {
-  INDEX_ROUTE_PROMPT_TEXT,
-  INDEX_ROUTE_TEXT_DELAY_MS,
-  INDEX_ROUTE_TITLE_TEXT,
-} from './IndexRoute.constants';
+import { ROUTES, UI_TEXT, TIMING } from '~/constants';
 import type { IndexRouteProps } from './IndexRoute.types';
 import { isStartKey } from './IndexRoute.utils';
 import './IndexRoute.css';
@@ -15,7 +11,7 @@ export const IndexRoute: FC<IndexRouteProps> = () => {
   const navigate = useNavigate();
 
   const handleStart = useCallback(() => {
-    navigate({ to: '/game' });
+    navigate({ to: ROUTES.GAME });
   }, [navigate]);
 
   const handleKeyDown = useCallback(
@@ -37,14 +33,14 @@ export const IndexRoute: FC<IndexRouteProps> = () => {
       <div className='indexRouteContent'>
         <h1 className='indexRouteTitle'>
           <span className='indexRouteGlow'>
-            <TerminalText text={INDEX_ROUTE_TITLE_TEXT} duration={750} />
+            <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
           </span>
         </h1>
         <span className='indexRoutePrompt'>
           <TerminalText
-            text={INDEX_ROUTE_PROMPT_TEXT}
-            duration={750}
-            delay={INDEX_ROUTE_TEXT_DELAY_MS}
+            text={UI_TEXT.START_PROMPT}
+            duration={TIMING.TERMINAL_TEXT_DURATION}
+            delay={TIMING.TERMINAL_TEXT_DURATION}
           />
         </span>
       </div>
