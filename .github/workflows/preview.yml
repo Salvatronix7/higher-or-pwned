@@ -25,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Build for PR preview
-        run: tsc && vite build --base=/higher-or-pwned/pr-preview/pr-${{ github.event.pull_request.number }}/
+        run: npx tsc && npx vite build --base=/higher-or-pwned/pr-preview/pr-${{ github.event.pull_request.number }}/
 
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/index.html dist/404.html
