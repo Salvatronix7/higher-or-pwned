@@ -22,6 +22,7 @@ export const createRouter = () => {
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: 'intent',
+    basepath: '/higher-or-pwned',
   });
 
   return router;
