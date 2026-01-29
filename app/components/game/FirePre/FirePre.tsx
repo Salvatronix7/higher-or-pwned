@@ -40,7 +40,22 @@ const applyHeatSource = (
   return next;
 };
 
-const stepFire = (grid: number[][], heatSource: FirePreHeatSource) => {
+const getSeededGrid = (
+  width: number,
+  height: number,
+  heatSource: FirePreHeatSource,
+  useBottomSeed: boolean,
+) => {
+  const empty = createEmptyGrid(width, height);
+  const seeded = useBottomSeed ? seedBottomRow(empty, width) : empty;
+  return applyHeatSource(seeded, heatSource);
+};
+
+const stepFire = (
+  grid: number[][],
+  heatSource: FirePreHeatSource,
+  useBottomSeed: boolean,
+) => {
   const height = grid.length;
   const width = grid[0].length;
   const next = createEmptyGrid(width, height);
@@ -48,18 +63,23 @@ const stepFire = (grid: number[][], heatSource: FirePreHeatSource) => {
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       if (y === height - 1) {
-        next[y][x] = MAX_INTENSITY;
+        if (useBottomSeed) {
+          next[y][x] = MAX_INTENSITY;
+        }
         continue;
       }
       const below = grid[y + 1][x];
       const belowLeft = grid[y + 1][Math.max(0, x - 1)];
       const belowRight = grid[y + 1][Math.min(width - 1, x + 1)];
-      const belowTwo = y + 2 < height ? grid[y + 2][x] : below;
-      const decay = Math.floor(Math.random() * 3);
-      const intensity = Math.floor(
-        (below + belowLeft + belowRight + belowTwo) / 4 - decay,
+      const weighted = Math.floor((below * 2 + belowLeft + belowRight) / 4);
+      const decay = Math.floor(Math.random() * 4);
+      const intensity = clamp(weighted - decay, 0, MAX_INTENSITY);
+      const drift = clamp(
+        x + (Math.floor(Math.random() * 3) - 1),
+        0,
+        width - 1,
       );
-      next[y][x] = clamp(intensity, 0, MAX_INTENSITY);
+      next[y][drift] = Math.max(next[y][drift], intensity);
     }
   }
 
@@ -67,32 +87,24 @@ const stepFire = (grid: number[][], heatSource: FirePreHeatSource) => {
 };
 
 export const FirePre: FC<FirePreProps> = memo(
-  ({ width, height, fps, heatSource }) => {
+  ({ width, height, fps, heatSource, useBottomSeed = true }) => {
     const [grid, setGrid] = useState(() =>
-      applyHeatSource(
-        seedBottomRow(createEmptyGrid(width, height), width),
-        heatSource,
-      ),
+      getSeededGrid(width, height, heatSource, useBottomSeed),
     );
 
     useEffect(() => {
-      setGrid(
-        applyHeatSource(
-          seedBottomRow(createEmptyGrid(width, height), width),
-          heatSource,
-        ),
-      );
-    }, [width, height, heatSource]);
+      setGrid(getSeededGrid(width, height, heatSource, useBottomSeed));
+    }, [width, height, heatSource, useBottomSeed]);
 
     useEffect(() => {
       if (fps <= 0) {
         return;
       }
       const interval = window.setInterval(() => {
-        setGrid((current) => stepFire(current, heatSource));
+        setGrid((current) => stepFire(current, heatSource, useBottomSeed));
       }, 1000 / fps);
       return () => window.clearInterval(interval);
-    }, [fps, heatSource]);
+    }, [fps, heatSource, useBottomSeed]);
 
     const output = useMemo(
       () =>

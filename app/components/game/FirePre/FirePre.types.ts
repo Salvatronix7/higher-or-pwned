@@ -9,4 +9,5 @@ export interface FirePreProps {
   readonly height: number;
   readonly fps: number;
   readonly heatSource: FirePreHeatSource;
+  readonly useBottomSeed?: boolean;
 }
