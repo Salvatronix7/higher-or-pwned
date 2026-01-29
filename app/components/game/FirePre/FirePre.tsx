@@ -1,10 +1,56 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import type { FC } from 'react';
 import type { FirePreHeatSource, FirePreProps } from './FirePre.types';
 import './FirePre.css';
 
 const MAX_INTENSITY = 15;
 const FIRE_CHARS = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@', '█'];
+
+class AnimationManager {
+  private animation: number | null = null;
+  private readonly callback: () => void;
+  private lastFrame = -1;
+  private frameTime: number;
+
+  constructor(callback: () => void, fps: number) {
+    this.callback = callback;
+    this.frameTime = 1000 / fps;
+  }
+
+  updateFps(fps: number) {
+    this.frameTime = 1000 / fps;
+  }
+
+  start() {
+    if (this.animation !== null) {
+      return;
+    }
+    this.animation = requestAnimationFrame(this.update);
+  }
+
+  pause() {
+    if (this.animation === null) {
+      return;
+    }
+    this.lastFrame = -1;
+    cancelAnimationFrame(this.animation);
+    this.animation = null;
+  }
+
+  private update = (time: number) => {
+    if (this.lastFrame === -1) {
+      this.lastFrame = time;
+    } else {
+      let delta = time - this.lastFrame;
+      while (delta >= this.frameTime) {
+        this.callback();
+        delta -= this.frameTime;
+        this.lastFrame += this.frameTime;
+      }
+    }
+    this.animation = requestAnimationFrame(this.update);
+  };
+}
 
 const createEmptyGrid = (width: number, height: number) =>
   Array.from({ length: height }, () => Array.from({ length: width }, () => 0));
@@ -91,19 +137,55 @@ export const FirePre: FC<FirePreProps> = memo(
     const [grid, setGrid] = useState(() =>
       getSeededGrid(width, height, heatSource, useBottomSeed),
     );
+    const animationManagerRef = useRef<AnimationManager | null>(null);
 
     useEffect(() => {
       setGrid(getSeededGrid(width, height, heatSource, useBottomSeed));
     }, [width, height, heatSource, useBottomSeed]);
 
     useEffect(() => {
+      if (!animationManagerRef.current) {
+        animationManagerRef.current = new AnimationManager(() => {
+          setGrid((current) => stepFire(current, heatSource, useBottomSeed));
+        }, Math.max(fps, 1));
+      } else {
+        animationManagerRef.current.updateFps(Math.max(fps, 1));
+      }
+
       if (fps <= 0) {
+        animationManagerRef.current.pause();
         return;
       }
-      const interval = window.setInterval(() => {
-        setGrid((current) => stepFire(current, heatSource, useBottomSeed));
-      }, 1000 / fps);
-      return () => window.clearInterval(interval);
+
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+      ).matches;
+      if (reducedMotion) {
+        animationManagerRef.current.pause();
+        return;
+      }
+
+      const handleFocus = () => animationManagerRef.current?.start();
+      const handleBlur = () => animationManagerRef.current?.pause();
+      const handleVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          animationManagerRef.current?.start();
+        } else {
+          animationManagerRef.current?.pause();
+        }
+      };
+
+      window.addEventListener('focus', handleFocus);
+      window.addEventListener('blur', handleBlur);
+      document.addEventListener('visibilitychange', handleVisibility);
+      handleVisibility();
+
+      return () => {
+        window.removeEventListener('focus', handleFocus);
+        window.removeEventListener('blur', handleBlur);
+        document.removeEventListener('visibilitychange', handleVisibility);
+        animationManagerRef.current?.pause();
+      };
     }, [fps, heatSource, useBottomSeed]);
 
     const output = useMemo(
