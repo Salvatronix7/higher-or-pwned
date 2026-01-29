@@ -1,0 +1,12 @@
+.gameOfLifePre {
+  margin: 0;
+  padding: 12px;
+  font-family: 'Fira Code', 'SFMono-Regular', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.1;
+  color: var(--color-terminal-text, #c4f3d6);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(196, 243, 214, 0.3);
+  border-radius: 8px;
+  white-space: pre;
+}
