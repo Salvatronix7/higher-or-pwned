@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import type { FC } from 'react';
-import type { FirePreProps } from './FirePre.types';
+import type { FirePreHeatSource, FirePreProps } from './FirePre.types';
 import './FirePre.css';
 
 const MAX_INTENSITY = 15;
@@ -19,7 +19,28 @@ const seedBottomRow = (grid: number[][], width: number) => {
   return seeded;
 };
 
-const stepFire = (grid: number[][]) => {
+const applyHeatSource = (
+  grid: number[][],
+  heatSource: FirePreHeatSource,
+) => {
+  const height = grid.length;
+  const width = grid[0].length;
+  const next = grid.map((row) => [...row]);
+  const startX = clamp(heatSource.x, 0, width - 1);
+  const startY = clamp(heatSource.y, 0, height - 1);
+  const endX = clamp(startX + heatSource.size - 1, 0, width - 1);
+  const endY = clamp(startY + heatSource.size - 1, 0, height - 1);
+
+  for (let y = startY; y <= endY; y += 1) {
+    for (let x = startX; x <= endX; x += 1) {
+      next[y][x] = MAX_INTENSITY;
+    }
+  }
+
+  return next;
+};
+
+const stepFire = (grid: number[][], heatSource: FirePreHeatSource) => {
   const height = grid.length;
   const width = grid[0].length;
   const next = createEmptyGrid(width, height);
@@ -42,46 +63,56 @@ const stepFire = (grid: number[][]) => {
     }
   }
 
-  return next;
+  return applyHeatSource(next, heatSource);
 };
 
-export const FirePre: FC<FirePreProps> = memo(({ width, height, fps }) => {
-  const [grid, setGrid] = useState(() =>
-    seedBottomRow(createEmptyGrid(width, height), width),
-  );
+export const FirePre: FC<FirePreProps> = memo(
+  ({ width, height, fps, heatSource }) => {
+    const [grid, setGrid] = useState(() =>
+      applyHeatSource(
+        seedBottomRow(createEmptyGrid(width, height), width),
+        heatSource,
+      ),
+    );
 
-  useEffect(() => {
-    setGrid(seedBottomRow(createEmptyGrid(width, height), width));
-  }, [width, height]);
+    useEffect(() => {
+      setGrid(
+        applyHeatSource(
+          seedBottomRow(createEmptyGrid(width, height), width),
+          heatSource,
+        ),
+      );
+    }, [width, height, heatSource]);
 
-  useEffect(() => {
-    if (fps <= 0) {
-      return;
-    }
-    const interval = window.setInterval(() => {
-      setGrid((current) => stepFire(current));
-    }, 1000 / fps);
-    return () => window.clearInterval(interval);
-  }, [fps]);
+    useEffect(() => {
+      if (fps <= 0) {
+        return;
+      }
+      const interval = window.setInterval(() => {
+        setGrid((current) => stepFire(current, heatSource));
+      }, 1000 / fps);
+      return () => window.clearInterval(interval);
+    }, [fps, heatSource]);
 
-  const output = useMemo(
-    () =>
-      grid
-        .map((row) =>
-          row
-            .map((cell) => {
-              const charIndex = Math.floor(
-                (cell / MAX_INTENSITY) * (FIRE_CHARS.length - 1),
-              );
-              return FIRE_CHARS[charIndex];
-            })
-            .join(''),
-        )
-        .join('\n'),
-    [grid],
-  );
+    const output = useMemo(
+      () =>
+        grid
+          .map((row) =>
+            row
+              .map((cell) => {
+                const charIndex = Math.floor(
+                  (cell / MAX_INTENSITY) * (FIRE_CHARS.length - 1),
+                );
+                return FIRE_CHARS[charIndex];
+              })
+              .join(''),
+          )
+          .join('\n'),
+      [grid],
+    );
 
-  return <pre className='firePre'>{output}</pre>;
-});
+    return <pre className='firePre'>{output}</pre>;
+  },
+);
 
 FirePre.displayName = 'FirePre';
