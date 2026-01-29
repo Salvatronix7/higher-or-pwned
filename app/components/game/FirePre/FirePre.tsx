@@ -28,7 +28,7 @@ class AnimationManager {
     this.animation = requestAnimationFrame(this.update);
   }
 
-  pause() {
+  stop() {
     if (this.animation === null) {
       return;
     }
@@ -153,38 +153,14 @@ export const FirePre: FC<FirePreProps> = memo(
       }
 
       if (fps <= 0) {
-        animationManagerRef.current.pause();
+        animationManagerRef.current.stop();
         return;
       }
 
-      const reducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches;
-      if (reducedMotion) {
-        animationManagerRef.current.pause();
-        return;
-      }
-
-      const handleFocus = () => animationManagerRef.current?.start();
-      const handleBlur = () => animationManagerRef.current?.pause();
-      const handleVisibility = () => {
-        if (document.visibilityState === 'visible') {
-          animationManagerRef.current?.start();
-        } else {
-          animationManagerRef.current?.pause();
-        }
-      };
-
-      window.addEventListener('focus', handleFocus);
-      window.addEventListener('blur', handleBlur);
-      document.addEventListener('visibilitychange', handleVisibility);
-      handleVisibility();
+      animationManagerRef.current.start();
 
       return () => {
-        window.removeEventListener('focus', handleFocus);
-        window.removeEventListener('blur', handleBlur);
-        document.removeEventListener('visibilitychange', handleVisibility);
-        animationManagerRef.current?.pause();
+        animationManagerRef.current?.stop();
       };
     }, [fps, heatSource, useBottomSeed]);
 
