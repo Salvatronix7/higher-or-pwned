@@ -19,10 +19,12 @@ export const createQueryClient = () =>
   });
 
 export const createRouter = () => {
+  const basepath = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
   const router = createTanStackRouter({
     routeTree,
     defaultPreload: 'intent',
-    basepath: '/higher-or-pwned',
+    basepath,
   });
 
   return router;

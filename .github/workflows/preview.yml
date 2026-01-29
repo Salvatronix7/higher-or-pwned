@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
@@ -24,36 +24,37 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build for PR preview
         run: npm run build
+        env:
+          VITE_BASE_PATH: /higher-or-pwned/pr-preview/pr-${{ github.event.pull_request.number }}/
 
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/index.html dist/404.html
 
-      - name: Deploy to Surge
-        id: surge
-        run: |
-          npm install -g surge
-          PREVIEW_URL="higher-or-pwned-pr-${{ github.event.pull_request.number }}.surge.sh"
-          surge ./dist $PREVIEW_URL --token ${{ secrets.SURGE_TOKEN }}
-          echo "url=https://$PREVIEW_URL" >> $GITHUB_OUTPUT
+      - name: Deploy PR preview
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: pr-preview/pr-${{ github.event.pull_request.number }}
 
       - name: Comment PR with preview URL
         uses: actions/github-script@v7
         with:
           script: |
-            const previewUrl = '${{ steps.surge.outputs.url }}';
+            const prNumber = context.issue.number;
+            const previewUrl = `https://salvatronix7.github.io/higher-or-pwned/pr-preview/pr-${prNumber}/`;
             const body = `## Preview Deployment
 
             Your preview is ready at: ${previewUrl}
 
             This preview will be updated automatically when you push new commits.`;
 
-            // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number,
+              issue_number: prNumber,
             });
 
             const botComment = comments.find(comment =>
@@ -61,7 +62,6 @@ jobs:
             );
 
             if (botComment) {
-              // Update existing comment
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -69,11 +69,10 @@ jobs:
                 body: body
               });
             } else {
-              // Create new comment
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                issue_number: prNumber,
                 body: body
               });
             }
