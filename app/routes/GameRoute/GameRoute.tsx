@@ -1,0 +1,112 @@
+import { memo, useCallback, useEffect, useRef } from 'react';
+import type { FC } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { PasswordCard } from '~/components';
+import { TerminalText } from '~/components/ui/TerminalText';
+import { useGame } from '~/hooks';
+import {
+  ROUTES,
+  GAME_STATES,
+  GUESS_CHOICES,
+  UI_TEXT,
+  TIMING,
+} from '~/constants';
+import type { GuessChoice } from '~/types';
+import type { ScoreDisplayProps } from './GameRoute.types';
+import './GameRoute.css';
+
+const Header: FC = memo(() => (
+  <header className='gameRouteHeader'>
+    <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
+  </header>
+));
+
+Header.displayName = 'Header';
+
+const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
+  <div className='gameRouteScoreContainer'>
+    <span className='gameRouteScoreLabel'>{UI_TEXT.SCORE_LABEL}</span>
+    <span className='gameRouteScoreValue'>{score}</span>
+  </div>
+));
+
+ScoreDisplay.displayName = 'ScoreDisplay';
+
+export const GameRoute: FC = () => {
+  const navigate = useNavigate();
+  const {
+    leftPassword,
+    rightPassword,
+    score,
+    gameState,
+    isLoading,
+    gameResult,
+    makeGuess,
+    startReveal,
+  } = useGame();
+  const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleGuess = useCallback(
+    (choice: GuessChoice) => {
+      if (!startReveal()) {
+        return;
+      }
+      if (revealTimeoutRef.current) {
+        clearTimeout(revealTimeoutRef.current);
+      }
+      revealTimeoutRef.current = setTimeout(() => {
+        makeGuess(choice);
+      }, TIMING.REVEAL_DELAY);
+    },
+    [makeGuess, startReveal],
+  );
+
+  useEffect(() => {
+    if (gameState === GAME_STATES.GAME_OVER && gameResult) {
+      navigate({
+        to: ROUTES.RESULT,
+        search: {
+          score: gameResult.score,
+        },
+      });
+    }
+  }, [gameState, gameResult, navigate]);
+
+  useEffect(() => {
+    return () => {
+      if (revealTimeoutRef.current) {
+        clearTimeout(revealTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className='gameRouteContainer'>
+      <Header />
+      <main className='gameRouteMain'>
+        <div className='gameRouteBoard'>
+          <PasswordCard
+            key={leftPassword.value}
+            password={leftPassword}
+            guess={() => handleGuess(GUESS_CHOICES.LEFT)}
+            isLoading={isLoading}
+            isDisabled={gameState !== GAME_STATES.PLAYING}
+            showCount={gameState !== GAME_STATES.PLAYING}
+            position={GUESS_CHOICES.LEFT}
+          />
+          <ScoreDisplay score={score} />
+          <PasswordCard
+            key={rightPassword.value}
+            password={rightPassword}
+            guess={() => handleGuess(GUESS_CHOICES.RIGHT)}
+            isLoading={isLoading}
+            isDisabled={gameState !== GAME_STATES.PLAYING}
+            showCount={gameState !== GAME_STATES.PLAYING}
+            position={GUESS_CHOICES.RIGHT}
+          />
+        </div>
+        <p className='gameRouteInstruction'>{UI_TEXT.GAME_INSTRUCTION}</p>
+      </main>
+    </div>
+  );
+};

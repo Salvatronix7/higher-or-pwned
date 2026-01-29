@@ -1,4 +1,4 @@
-.container {
+.indexRouteContainer {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -8,11 +8,11 @@
   user-select: none;
 }
 
-.content {
+.indexRouteContent {
   text-align: center;
 }
 
-.title {
+.indexRouteTitle {
   font-size: var(--font-size-2xl);
   font-weight: normal;
   letter-spacing: 0.1em;
@@ -20,25 +20,16 @@
 }
 
 @media (min-width: 768px) {
-  .title {
+  .indexRouteTitle {
     font-size: var(--font-size-3xl);
   }
 }
 
-.glow {
+.indexRouteGlow {
   text-shadow: var(--glow-text);
 }
 
-.separator {
-  color: var(--color-terminal-green-dim);
-}
-
-.cursor {
-  color: var(--color-terminal-green);
-  text-shadow: var(--glow-text);
-}
-
-.prompt {
+.indexRoutePrompt {
   font-size: var(--font-size-base);
   color: var(--color-terminal-green-dim);
 }
