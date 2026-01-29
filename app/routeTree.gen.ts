@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as ResultImport } from './routes/result'
 import { Route as GameImport } from './routes/game'
 import { Route as IndexImport } from './routes/index'
+import { Route as PlayersImport } from './routes/players'
 
 // Create Virtual Filesafe Routes
 
@@ -36,6 +37,12 @@ const GameRoute = GameImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PlayersRoute = PlayersImport.update({
+  id: '/players',
+  path: '/players',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -64,6 +71,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultImport
       parentRoute: typeof rootRoute
     }
+    '/players': {
+      id: '/players'
+      path: '/players'
+      fullPath: '/players'
+      preLoaderRoute: typeof PlayersImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -73,12 +87,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/game': typeof GameRoute
   '/result': typeof ResultRoute
+  '/players': typeof PlayersRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/game': typeof GameRoute
   '/result': typeof ResultRoute
+  '/players': typeof PlayersRoute
 }
 
 export interface FileRoutesById {
@@ -86,14 +102,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/game': typeof GameRoute
   '/result': typeof ResultRoute
+  '/players': typeof PlayersRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/game' | '/result'
+  fullPaths: '/' | '/game' | '/result' | '/players'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/game' | '/result'
-  id: '__root__' | '/' | '/game' | '/result'
+  to: '/' | '/game' | '/result' | '/players'
+  id: '__root__' | '/' | '/game' | '/result' | '/players'
   fileRoutesById: FileRoutesById
 }
 
@@ -101,12 +118,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GameRoute: typeof GameRoute
   ResultRoute: typeof ResultRoute
+  PlayersRoute: typeof PlayersRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GameRoute: GameRoute,
   ResultRoute: ResultRoute,
+  PlayersRoute: PlayersRoute,
 }
 
 export const routeTree = rootRoute
