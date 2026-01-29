@@ -1,28 +1,24 @@
-import { memo, useCallback, useMemo, useState } from 'react';
-import type { FC } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { AsciiArtTyping, Button } from '~/components';
-import { TerminalText } from '~/components/ui/TerminalText';
-import { SARCASTIC_MESSAGES } from '~/constants';
-import { getRandomItem } from '~/utils';
-import {
-  RESULT_ROUTE_TEXT_DELAY_MS,
-  RESULT_ROUTE_TITLE_TEXT,
-} from './ResultRoute.constants';
-import './ResultRoute.css';
+import { memo, useCallback, useMemo, useState } from "react";
+import type { FC } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { AsciiArtTyping, Button } from "~/components";
+import { TerminalText } from "~/components/ui/TerminalText";
+import { SARCASTIC_MESSAGES } from "~/constants";
+import { getRandomItem } from "~/utils";
+import { RESULT_ROUTE_TEXT_DELAY_MS, RESULT_ROUTE_TITLE_TEXT } from "./ResultRoute.constants";
+import "./ResultRoute.css";
 
 interface ResultRouteProps {
   score: number;
 }
 
 const Header: FC = memo(() => (
-  <header className='resultRouteHeader'>
+  <header className="resultRouteHeader">
     <TerminalText text={RESULT_ROUTE_TITLE_TEXT} duration={500} />
   </header>
 ));
 
-Header.displayName = 'Header';
-
+Header.displayName = "Header";
 
 const ASCII_ART = [
   `
@@ -172,7 +168,7 @@ dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠈⢤⠀⠀⠂⠀⠈⠃⠐⡄
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠀⠀⠀⠑⠠⠠⠁⠐⠀⠈
 `,
-`
+  `
 ⠀⠀⠀⢀⡤⢤⢄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⣼⡅⠠⢀⡈⢀⣙⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠤⠤⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⢸⠀⠀⠀⠈⠙⠿⣝⢇⠀⠀⣀⣠⠤⠤⠤⠤⣤⡤⠚⠁⠀⠀⠀⠀⠀⠉⠢⡀⠀⠀⠀⠀⠀⠀
@@ -194,10 +190,10 @@ dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
 ⠀⠀⣏⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠊⠁⢀⣀⣀⠴⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠘⢦⡀⠀⠀⠀⠀⠀⠀⢀⣀⠴⠖⠒⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠉⠑⠒⠒⠐⠒⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-`];
+`,
+];
 
 export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
-
   const [showFooter, setShowFooter] = useState(false);
   const navigate = useNavigate();
 
@@ -206,7 +202,7 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
   const textDelay = RESULT_ROUTE_TEXT_DELAY_MS;
 
   const handleRetry = useCallback(() => {
-    navigate({ to: '/game' });
+    navigate({ to: "/game" });
   }, [navigate]);
 
   const handleShare = useCallback(async () => {
@@ -215,7 +211,7 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'HIGHER || PWNED_',
+          title: "HIGHER || PWNED_",
           text: shareText,
         });
       } catch {
@@ -233,24 +229,18 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
       <Header />
       <main className="main">
         <div className="scoreSection">
-          <TerminalText text='score' duration={500} />
+          <TerminalText text="score" duration={500} />
           <TerminalText text={score.toString()} duration={500} delay={textDelay} />
         </div>
 
-        {/* <AsciiArtTyping text={asciiArt} duration={1000} delay={textDelay * 2} className="asciiArt" /> */}
-        <AsciiArtTyping text={ASCII_ART[ASCII_ART.length - 1] as string} duration={1000} delay={textDelay * 2} className="asciiArt" />
+        <AsciiArtTyping text={asciiArt} duration={1000} delay={textDelay * 2} className="asciiArt" />
 
-        <TerminalText
-          text={sarcasticMessage}
-          duration={500}
-          delay={textDelay * 3}
-          onAnimationEnd={() => setShowFooter(true)}
-        />
+        <TerminalText text={sarcasticMessage} duration={500} delay={textDelay * 3} onAnimationEnd={() => setShowFooter(true)} />
 
         {true && (
           <div className="actions">
             <Button onClick={handleRetry}>retry</Button>
-            <Button onClick={handleShare} variant='secondary'>
+            <Button onClick={handleShare} variant="secondary">
               share
             </Button>
           </div>
@@ -258,4 +248,4 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
       </main>
     </div>
   );
-}
+};
