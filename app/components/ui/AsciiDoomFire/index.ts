@@ -1,0 +1,1 @@
+export { AsciiDoomFire } from './AsciiDoomFire';
