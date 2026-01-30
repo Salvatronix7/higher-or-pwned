@@ -15,6 +15,7 @@ import { getRandomItem } from "~/utils";
 import "./ResultRoute.css";
 import { Console } from "~/components/ui/Console/Console";
 import { ASCII_ART } from "./ResultRoute.constants";
+import { FireSimulation } from "~/components/Fire/Fire";
 
 interface ResultRouteProps {
   score: number;
@@ -50,24 +51,33 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
   return (
     <div className="container">
+      <FireSimulation
+        width={200}
+        height={75}
+        intensity={1}
+        decay={0}
+        sparkRate={0.2}
+        cooling={0.01}
+        fps={24}
+      />
       <Console>
         <main className="main">
           <div className="scoreSection">
             <CommandLine duration={.5}>{UI_TEXT.SCORE_LABEL.toLowerCase()}</CommandLine>
-            <CommandLine duration={1} delay={.5}>{score.toString()}</CommandLine>
+            <CommandLine duration={.5} delay={.5}>{score.toString()}</CommandLine>
           </div>
 
-          <AsciiArtTyping text={asciiArt} duration={1} delay={.5 * 5} className="asciiArt" />
+          <AsciiArtTyping text={asciiArt} duration={.5} delay={1.5} className="asciiArt" />
 
 
           <div className="actions">
-            <Button onClick={handleRetry} duration={1} delay={1 * 4}>{UI_TEXT.RETRY_BUTTON}</Button>
-            <Button onClick={handleShare} duration={1} delay={1 * 4}>
+            <Button onClick={handleRetry} duration={.5} delay={2}>{UI_TEXT.RETRY_BUTTON}</Button>
+            <Button onClick={handleShare} duration={.5} delay={2}>
               {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
 
-          <CommandLine duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 5} keepCursorAnimation withCursor>{sarcasticMessage}</CommandLine>
+          <CommandLine duration={1} delay={3} keepCursorAnimation withCursor>{sarcasticMessage}</CommandLine>
         </main>
       </Console>
     </div>

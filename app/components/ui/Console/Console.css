@@ -1,10 +1,10 @@
 .consoleRoot {
-    background-color: var(--color-console-background);
+    background-color: var(--color-background);
     border: 1px solid var(--color-border-dim);
     border-radius: 8px;
     overflow: hidden;
     height: fit-content;
-
+    z-index: 2;
 }
 
 .consoleHeader {
@@ -29,6 +29,7 @@
     place-items: center;
     place-self: end;
     gap: 1rem;
+    background-color: var(--color-console-background);
 
     &>div:last-child {
         font-size: 2rem;

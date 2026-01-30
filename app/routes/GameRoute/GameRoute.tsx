@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { FC } from 'react';
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { CommandLine, PasswordCard } from '~/components';
 import { Console } from '~/components/ui/Console/Console';
 import { TerminalText } from '~/components/ui/TerminalText';
@@ -15,6 +15,7 @@ import { useGame } from '~/hooks';
 import type { GuessChoice } from '~/types';
 import './GameRoute.css';
 import type { ScoreDisplayProps } from './GameRoute.types';
+import { FireSimulation } from '~/components/Fire/Fire';
 
 const Header: FC = memo(() => (
   <header className='gameRouteHeader'>
@@ -36,6 +37,11 @@ const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
 ScoreDisplay.displayName = 'ScoreDisplay';
 
 export const GameRoute: FC = () => {
+
+  const [decay, setDecay] = useState(0.01);
+  const [sparkRate, setSparkRate] = useState(.01);
+  const [cooling, setCooling] = useState(0.01);
+
   const navigate = useNavigate();
   const {
     leftPassword,
@@ -49,8 +55,27 @@ export const GameRoute: FC = () => {
   } = useGame();
   const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const setFireParameters = () => {
+    let oldSparkRate = sparkRate;
+
+    setDecay(0.01);
+    setSparkRate(prev => {
+      oldSparkRate = prev
+      return prev + 0.1 
+    });
+    setCooling(0.01);
+
+    setTimeout(() => {
+      setDecay(0.01);
+      setSparkRate(oldSparkRate + 0.01);
+      setCooling(0.01);
+    }, 500);
+    // console.log('Updated fire parameters:', { decay, sparkRate, cooling });
+  }
+
   const handleGuess = useCallback(
     (choice: GuessChoice) => {
+      setFireParameters();
       if (!startReveal()) {
         return;
       }
@@ -83,9 +108,17 @@ export const GameRoute: FC = () => {
     };
   }, []);
 
-
   return (
     <main className='gameRouteContainer'>
+      <FireSimulation
+        width={200}
+        height={75}
+        intensity={1}
+        decay={decay}
+        sparkRate={sparkRate}
+        cooling={cooling}
+        fps={24}
+      />
       <Console>
         <div className='gameBoard'>
           <PasswordCard
