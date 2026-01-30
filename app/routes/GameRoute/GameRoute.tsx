@@ -1,20 +1,20 @@
-import { memo, useCallback, useEffect, useRef } from 'react';
-import type { FC } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import type { FC } from 'react';
+import { memo, useCallback, useEffect, useRef } from 'react';
 import { CommandLine, PasswordCard } from '~/components';
+import { Console } from '~/components/ui/Console/Console';
 import { TerminalText } from '~/components/ui/TerminalText';
-import { useGame } from '~/hooks';
 import {
-  ROUTES,
   GAME_STATES,
   GUESS_CHOICES,
-  UI_TEXT,
+  ROUTES,
   TIMING,
+  UI_TEXT,
 } from '~/constants';
+import { useGame } from '~/hooks';
 import type { GuessChoice } from '~/types';
-import type { ScoreDisplayProps } from './GameRoute.types';
 import './GameRoute.css';
-import { Console } from '~/components/ui/Console/Console';
+import type { ScoreDisplayProps } from './GameRoute.types';
 
 const Header: FC = memo(() => (
   <header className='gameRouteHeader'>

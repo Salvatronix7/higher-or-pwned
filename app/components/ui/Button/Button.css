@@ -8,13 +8,18 @@
   }
 
   &:active {
-  color: var(--color-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
+.text,
 .subtitle {
   position: absolute;
-  top: calc(50% + 1.5rem);
+  top: calc(50%);
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.subtitle {
+  top: calc(50% + 1.5rem);
 }

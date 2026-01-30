@@ -6,7 +6,7 @@ import { CommandLine } from '../CommandLine';
 import { getClassNames } from '~/utils/getClassNames';
 import { addChars } from '~/utils/addChars';
 
-export const Button: FC<ButtonProps> = ({ children, subtitle, width = 3, height = 3, duration = 0, delay = 0, className, onClick }) => {
+export const Button: FC<ButtonProps> = ({ children, subtitle, width = 30, height = 5, duration = 0, delay = 0, className, onClick }) => {
   const classNames = getClassNames({
     [className || '']: !!className,
     buttonRoot: true,
@@ -15,28 +15,19 @@ export const Button: FC<ButtonProps> = ({ children, subtitle, width = 3, height 
   const actualDuration = duration / height;
 
   return <button onClick={onClick} className={classNames}>
-    <CommandLine
-      duration={actualDuration}
-      delay={delay}>
-      {addChars(Array(children.length + 1).join("-"), "-", width)}
-    </CommandLine>
+    <CommandLine duration={actualDuration} delay={delay}>{addChars("-", width + 1)}</CommandLine>
     {height > 3 && Array(height - 3).fill(0).map((_, index) => (
-      <CommandLine key={index} duration={actualDuration} delay={delay + (index * actualDuration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
+      <CommandLine key={index} duration={actualDuration} delay={delay + (index * actualDuration)}>{`|${addChars(" ", width - 1)}|`}</CommandLine>
     ))}
-    <CommandLine
-      duration={actualDuration}
-      delay={delay + (Array(height - 3).length * actualDuration)}>
-      {`|${addChars(children, " ", width - 1)}|`}
-    </CommandLine>
-    {height > 3 && Array(height - 3).fill(0).map((_, index) => (
-      <CommandLine key={index} duration={actualDuration} delay={delay + ((index + 1 + Array(height - 3).length) * actualDuration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
-    ))}
-    <CommandLine
-      duration={actualDuration}
-      delay={delay + ((Array(height - 3).length * 2) * actualDuration)}>
-      {addChars(Array(children.length + 1).join("-"), "-", width)}
-    </CommandLine>
-    {subtitle &&
+    <CommandLine duration={actualDuration} delay={delay + ((height - 1) * actualDuration)}>{addChars("-", width + 1)}</CommandLine>
+    <div className='text'>
+      <CommandLine
+        duration={actualDuration} delay={delay + ((height / 2) * actualDuration)}>
+        {children}
+      </CommandLine>
+    </div>
+    {
+      subtitle &&
       <div className='subtitle'>
         <CommandLine
           duration={1}>
@@ -44,7 +35,7 @@ export const Button: FC<ButtonProps> = ({ children, subtitle, width = 3, height 
         </CommandLine>
       </div>
     }
-  </button>
+  </button >
 }
 
 Button.displayName = 'Button';
