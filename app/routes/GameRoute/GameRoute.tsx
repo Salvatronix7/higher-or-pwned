@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { FC } from 'react';
-import { memo, useCallback, useEffect, useRef } from 'react';
-import { CommandLine, PasswordCard } from '~/components';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { AsciiDoomFire, CommandLine, PasswordCard } from '~/components';
 import { Console } from '~/components/ui/Console/Console';
 import { TerminalText } from '~/components/ui/TerminalText';
 import {
@@ -36,6 +36,10 @@ const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
 ScoreDisplay.displayName = 'ScoreDisplay';
 
 export const GameRoute: FC = () => {
+  const [decay, setDecay] = useState(10);
+  const [driftRange, setDriftRange] = useState(0);
+  const [flickerMax, setFlickerMax] = useState(0);
+
   const navigate = useNavigate();
   const {
     leftPassword,
@@ -49,17 +53,24 @@ export const GameRoute: FC = () => {
   } = useGame();
   const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const incrementFireIntensity = () => {
+    setDecay((prev) => Math.max(prev - 0.25, 1));
+    setDriftRange((prev) => Math.min(prev + 0.1, 5));
+    setFlickerMax((prev) => Math.min(prev + 0.1, 10));
+  }
+
   const handleGuess = useCallback(
     (choice: GuessChoice) => {
-      if (!startReveal()) {
-        return;
-      }
-      if (revealTimeoutRef.current) {
-        clearTimeout(revealTimeoutRef.current);
-      }
-      revealTimeoutRef.current = setTimeout(() => {
-        makeGuess(choice);
-      }, TIMING.REVEAL_DELAY * 1000);
+      incrementFireIntensity();
+      // if (!startReveal()) {
+      //   return;
+      // }
+      // if (revealTimeoutRef.current) {
+      //   clearTimeout(revealTimeoutRef.current);
+      // }
+      // revealTimeoutRef.current = setTimeout(() => {
+      //   makeGuess(choice);
+      // }, TIMING.REVEAL_DELAY * 1000);
     },
     [makeGuess, startReveal],
   );
@@ -86,6 +97,7 @@ export const GameRoute: FC = () => {
 
   return (
     <main className='gameRouteContainer'>
+      <AsciiDoomFire width={180} height={40} fps={30} decayMax={decay} driftRange={driftRange} flickerMax={flickerMax} className="fire" />
       <Console>
         <div className='gameBoard'>
           <PasswordCard
@@ -108,7 +120,7 @@ export const GameRoute: FC = () => {
             position={GUESS_CHOICES.RIGHT}
           />
         </div>
-      </Console >
-    </main >
+      </Console>
+    </main>
   );
 };
