@@ -1,5 +1,6 @@
 .container {
-  min-height: 100vh;
+  margin: auto;
+  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
   padding: var(--spacing-md);
@@ -49,7 +50,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xs);
-  font-size: 3rem;
+  font-size: 2rem;
 }
 
 .scoreLabel {
@@ -66,7 +67,7 @@
 
 .asciiArt {
   color: var(--color-terminal-green);
-  text-shadow: var(--glow-text);
+  /* text-shadow: var(--glow-text); */
   white-space: pre;
 }
 

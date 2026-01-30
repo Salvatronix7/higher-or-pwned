@@ -8,13 +8,28 @@
     }
 }
 
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 0;
+    }
+
+    51%,
+    100% {
+        opacity: 1;
+    }
+}
+
 .commandLineRoot {
     white-space: pre-wrap;
     display: block;
-    position: relative;
+    position: relative; 
     width: fit-content;
+    color: inherit;
 
-    &::before {
+    &::before,
+    &::after {
         content: "";
         position: absolute;
         width: 100%;
@@ -26,7 +41,10 @@
         animation-delay: var(--delay);
     }
 
-    &.with_cursor::before {
+    &.with_cursor::after {
         content: "_";
+        animation:
+            type-animation var(--duration) var(--delay) steps(var(--length), end) forwards,
+            blink 1s steps(2, start) infinite;
     }
 }

@@ -2,15 +2,15 @@
   /* Terminal Colors */
   --color-background: #10121c;
   --color-surface: #111111;
-  --color-terminal-green: #0f0;
-  --color-terminal-green-dim: #0a0;
-  --color-terminal-green-glow: rgba(0, 255, 0, 0.3);
+  --color-terminal-green: #9de64e;
+  --color-terminal-green-dim: #9de64e;
+  --color-terminal-green-glow: #9de64e;
   --color-text-primary: #9de64e;
-  --color-text-secondary: #0a0;
-  --color-border: #0f0;
-  --color-border-dim: #060;
+  --color-text-secondary: #9de64e;
+  --color-border: #9de64e;
+  --color-border-dim: #9de64e;
   --color-error: #f00;
-  --color-success: #0f0;
+  --color-success: #9de64e;
 
   /* Spacing */
   --spacing-xs: 0.25rem;

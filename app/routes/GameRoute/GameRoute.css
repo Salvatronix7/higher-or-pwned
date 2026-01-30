@@ -1,62 +1,14 @@
 .gameRouteContainer {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  padding: var(--spacing-md);
-}
-
-.gameRouteHeader {
-  text-align: center;
-  padding: var(--spacing-md) 0;
-}
-
-.gameRouteMain {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.gameRouteBoard {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-@media (min-width: 768px) {
-  .gameRouteBoard {
-    flex-direction: row;
-  }
-}
-
-.gameRouteScoreContainer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  background: var(--color-background);
+  justify-content: center;
   padding: var(--spacing-md);
-  z-index: 10;
+  cursor: pointer;
+  user-select: none;
 }
 
-.gameRouteScoreLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-terminal-green-dim);
-  letter-spacing: 0.2em;
-}
-
-.gameRouteScoreValue {
-  font-size: var(--font-size-2xl);
-  color: var(--color-terminal-green);
-  text-shadow: var(--glow-text);
-}
-
-.gameRouteInstruction {
-  text-align: center;
-  padding: var(--spacing-md);
-  color: var(--color-terminal-green-dim);
-  font-size: var(--font-size-sm);
+.gameBoard {
+  display: grid;
+  grid-auto-flow: column;
 }

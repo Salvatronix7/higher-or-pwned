@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import type { FC } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { AsciiArtTyping, Button } from "~/components";
+import { AsciiArtTyping, Button, CommandLine } from "~/components";
 import { TerminalText } from "~/components/ui/TerminalText";
 import {
   ROUTES,
@@ -9,197 +9,18 @@ import {
   UI_TEXT,
   TIMING,
   createShareText,
+  RESULT_ASCII_ART,
 } from "~/constants";
 import { getRandomItem } from "~/utils";
 import "./ResultRoute.css";
+import { Console } from "~/components/ui/Console/Console";
+import { ASCII_ART } from "./ResultRoute.constants";
 
 interface ResultRouteProps {
   score: number;
 }
 
-const Header: FC = memo(() => (
-  <header className="resultRouteHeader">
-    <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
-  </header>
-));
-
-Header.displayName = "Header";
-
-const ASCII_ART = [
-  `
-                     .ed"""" """$$$$be.
-                   -"           ^""**$$$e.
-                 ."                   '$$$c
-                /                      "4$$b
-               d  3                      $$$$
-               $  *                   .$$$$$$
-              .$  ^c           $$$$$e$$$$$$$$.
-              d$L  4.         4$$$$$$$$$$$$$$b
-              $$$$b ^ceeeee.  4$$ECL.F*$$$$$$$
-  e$""=.      $$$$P d$$$$F $ $$$$$$$$$- $$$$$$
- z$$b. ^c     3$$$F "$$$$b   $"$$$$$$$  $$$$*"      .=""$c
-4$$$$L        $$P"  "$$b   .$ $$$$$...e$$        .=  e$$$.
-^*$$$$$c  %..   *c    ..    $$ 3$$$$$$$$$$eF     zP  d$$$$$
-  "**$$$ec   "   %ce""    $$$  $$$$$$$$$$*    .r" =$$$$P""
-        "*$b.  "c  *$e.    *** d$$$$$"L$$    .d"  e$$***"
-          ^*$$c ^$c $$$      4J$$$$$% $$$ .e*".eeP"
-             "$$$$$$"'$=e....$*$$**$cz$$" "..d$*"
-               "*$$$  *=%4.$ L L$ P3$$$F $$$P"
-                  "$   "%*ebJLzb$e$$$$$b $P"
-                    %..      4$$$$$$$$$$ "
-                     $$$e   z$$$$$$$$$$%
-                      "*$c  "$$$$$$$P"
-                       ."""*$$$$$$$$bc
-                    .-"    .$***$$$"""*e.
-                 .-"    .e$"     "*$c  ^*b.
-          .=*""""    .e$*"          "*bc  "*$e..
-        .$"        .z*"               ^*$e.   "*****e.
-        $$ee$c   .d"                     "*$.        3.
-        ^*$E")$..$"                         *   .ee==d%
-           $.d$$$*                           *  J$$$e*
-            """""                              "$$$"
-`,
-  `
-          .                                                      .
-        .n                   .                 .                  n.
-  .   .dP                  dP                   9b                 9b.    .
- 4    qXb         .       dX                     Xb       .        dXp     t
-dX.    9Xb      .dXb    __                         __    dXb.     dXP     .Xb
-9XXb._       _.dXXXXb dXXXXbo.                 .odXXXXb dXXXXb._       _.dXXP
- 9XXXXXXXXXXXXXXXXXXXVXXXXXXXXOo.           .oOXXXXXXXXVXXXXXXXXXXXXXXXXXXXP
-  "9XXXXXXXXXXXXXXXXXXXXX'~   ~"OOO8b   d8OOO'~   ~"XXXXXXXXXXXXXXXXXXXXXP'
-    "9XXXXXXXXXXXP' "9XX'   DIE    "98v8P'  HUMAN   "XXP' "9XXXXXXXXXXXP'
-        ~~~~~~~       9X.          .db|db.          .XP       ~~~~~~~
-                        )b.  .dbo.dP'"v'"9b.odb.  .dX(
-                      ,dXXXXXXXXXXXb     dXXXXXXXXXXXb.
-                     dXXXXXXXXXXXP'   .   "9XXXXXXXXXXXb
-                    dXXXXXXXXXXXXb   d|b   dXXXXXXXXXXXXb
-                    9XXb'   "XXXXXb.dX|Xb.dXXXXX'   "dXXP
-                     "'      9XXXXXX(   )XXXXXXP      "'
-                              XXXX X."v'.X XXXX
-                              XP^X'"b   d'"X^XX
-                              X. 9  "   '  P )X
-                              "b  "       '  d'
-                               "             '
-`,
-  `
-              ____
-        __,---'     '--.__
-     ,-'                ; '.
-    ,'                  '--.'--.
-   ,'                        '._ '-.
-   ;                     ;     '-- ;
- ,-'-_       _,-~~-.      ,--      '.
- ;;   '-,;    ,'~'.__    ,;;;    ;  ;
- ;;    ;,'  ,;;      ',  ;;;     '. ;
- ':   ,'    ':;     __/  '.;      ; ;
-  ;~~^.   '.   '---'~~    ;;      ; ;
-  ',' '.   '.            .;;;     ;'
-  ,',^. '.  '._    __    ':;     ,'
-  '-' '--'    ~'--'~~'--.  ~    ,'
- /;'-;_ ; ;. /. /   ; ~~'-.     ;
-; ;  ; ',;'-;__;---;      '----'
-''-'-;__;:  ;  ;__;
-         '-- '-'
-`,
-  `
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⡀⢄⢮⡳⣶⢭⣖⣢⡤⢀⡀⠀
-⠀⠀⠀⢀⢤⣢⣵⣾⣾⣿⣿⣿⣹⣿⣿⣿⣿⣶⣯⣵⣒⡠⢄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⣎⣿⣿⣿⣿⣿⡿⠛⠛⠻⣿⣿⣿⣿⣿⣿⡇⣿⣟⣵⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⡇⠼⣿⣿⣿⡟⠀⢠⣤⢸⡊⢻⣿⡿⣿⣿⡇⣿⣿⣷⣝⣕⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⡇⢑⢻⣿⣿⣧⡀⣅⡡⣠⠆⠹⣿⣿⣿⣿⣷⣿⣿⣿⣿⣷⢟⢯⠢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⡇⣸⢉⢿⣯⣿⣿⣶⣧⣤⣰⣾⣿⡟⠽⣋⣈⢿⣿⣿⣿⣿⢸⣷⣝⠮⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⣷⣿⠠⣞⢿⣿⣿⣿⣿⢟⡫⡗⡢⡑⢭⣗⡺⢷⣙⠿⣿⣿⣼⣿⢿⣷⣍⣎⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⣿⣿⣼⡏⠗⢝⢿⣿⡈⢥⣿⠞⡜⡼⣾⣛⢿⣛⣻⣷⣰⠹⣻⣿⣿⣿⣿⣿⣮⡪⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣸⣿⣿⣾⡇⠄⠁⠋⣊⢟⠬⡻⣯⡵⣣⡻⣟⡦⢾⣿⣋⣇⢉⣿⣿⣿⣿⣿⣿⣿⣿⣿⡪⡢⡀⠀⠀⠀⠀⠀⠀⠀
-⠠⠰⣹⢔⠹⣿⣿⣫⠁⠀⢰⡌⢿⡎⢜⠝⡿⣟⡫⢗⡫⠏⠙⢫⣵⠘⣄⡘⠿⣿⣿⣿⣿⣿⣿⣿⣾⣮⡢⡀⠀⠀⠀⠀⠀
-⠀⠀⠀⠄⡚⠘⢿⣯⡅⠀⢸⠇⠄⠀⠀⠉⠲⠔⡱⡻⢿⣽⣁⠢⢼⣶⣿⣿⣷⣬⡉⡹⠿⣿⣿⣿⣿⣿⣯⡪⡢⡀⠀⠀⠀
-⠀⠀⠠⠀⢀⠄⠎⢿⣷⠀⢸⠇⡄⡆⡌⠁⡂⠀⡘⢠⠱⠨⢛⢿⣶⣬⡉⡹⠻⣿⣷⣢⣄⠙⢿⣿⣿⣿⣿⡿⠞⢞⡆⠀⠀
-⠀⠀⠀⠀⠈⠈⠒⠊⡻⡇⡄⡒⠤⡀⠁⠃⠁⢠⢀⠁⠀⠀⠂⢉⢊⠝⠿⣶⡤⡘⢿⣿⣷⣝⢦⣙⠿⡛⣉⣼⣾⣿⡇⠀⠀
-⠀⠀⠀⠀⠀⠘⠠⢬⠐⠱⠺⢵⡣⢆⡅⢆⡎⠘⠈⠘⢰⠰⠀⠃⠎⡔⠸⢐⠹⢻⢵⡩⣛⢟⢋⣡⣵⣿⡟⢹⢿⣿⡇⠀⠀
-⠀⠀⠀⠀⠀⠀⠂⠄⡈⢀⠀⠑⢉⢓⠾⡥⢨⠐⡠⣀⠂⠆⡄⡄⡀⠐⢀⠀⡌⡖⢌⠪⣤⢾⣿⣿⣿⣏⣍⢰⣿⢿⡇⢤⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠋⠐⠁⠀⠈⠐⠱⠁⢊⢅⡃⠉⢒⠤⡁⠃⠦⢌⠘⠀⠁⠀⠂⣿⣿⣿⣿⣿⣿⣧⣸⣾⣿⡇⢠⠰
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠄⠄⡀⠂⠅⠌⠕⣰⢈⠒⠵⢢⢎⣐⠀⡃⠄⠀⣿⢷⣿⣿⣿⣟⣯⣷⠿⢻⢱⠂⠈
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠈⠀⢉⢒⠄⡂⡖⡩⢒⠄⠀⣿⡿⣟⣽⣾⡟⡏⠆⠀⠑⠈⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠄⠂⠈⠈⢑⠣⢇⡎⠄⣿⣿⡿⡉⠃⠃⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠀⠀⠁⠁⠀⠎⠛⠉⡀⠉⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀
-`,
-  `
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠠⡄
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠰⣜⠎⡳⣌⠰⢡⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡜⣚⠶⣙⡼⢢⣙⠧⢊⠵⣳⡄⠈⢀⠐⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡞⣧⢟⡻⢏⣝⢣⠦⣜⡹⡄⠊⣥⠻⣄⠀⠀⠁⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⢣⣟⢮⡳⣝⣪⢎⣧⢛⡴⢣⡝⡠⡔⢫⠜⣧⠀⠂⡀⠈⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣐⣯⣿⢯⣿⡽⡾⢥⣛⣶⢫⣜⡳⣎⠵⣘⢆⠓⡜⢳⡄⠀⠡⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⢹⡾⣽⡿⠿⣙⣞⡳⡽⢺⡝⡼⢳⢽⣚⡵⣊⠕⡈⢆⠻⢳⠶⣦⢌⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠎⣇⠁⢀⠸⣱⢏⡸⢁⠏⣱⢈⠱⡏⣾⣱⢿⡸⡾⢰⠀⠈⢁⠏⣶⠉⡆⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⣘⣉⠙⣄⠀⠡⢎⠴⣩⠞⡤⢉⠦⣁⠉⣿⣣⠗⣥⢧⢨⡑⡌⡀⢎⡵⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠐⠠⠀⠀⠀⠀⠀⠰⠘⠇⠸⣶⣠⢎⣷⡱⣮⠜⣥⢢⢐⠂⢿⣽⣻⢶⣎⢷⡰⡜⣵⢪⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠈⣣⠈⡔⠳⣒⠦⡤⢀⠄⠀⣟⣷⢿⢞⡷⢯⣞⡖⡣⢎⡡⢸⢿⣝⢷⣚⢧⡳⣙⣢⠛⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⡀⠀⠀⢨⠁⠐⡀⢀⠀⠀⢀⠀⢀⣿⣿⣿⣿⡿⣷⢿⡼⡑⢆⢡⢸⣿⣞⣧⢻⢸⡓⠷⣌⠋⢆⢣⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠀
-⠧⣍⠠⠸⣏⠀⡐⠀⠈⠀⠀⠀⢘⣿⣿⣿⣿⣿⡿⣏⣷⠹⢎⡲⢸⣿⡿⡞⣭⢣⡝⠖⡎⡑⠌⡒⠄⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⣘⠀
-⢭⠦⠁⠀⣯⠄⠠⠀⠐⠀⠀⠀⣹⣿⣿⣿⣿⣿⢿⣻⣞⠻⣎⠵⢸⣽⣿⢷⢣⠏⡼⣹⢀⠂⠜⠈⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠃
-⢸⢣⠀⠀⠘⡀⠀⠈⠄⠁⠈⠢⣿⣿⣿⣿⣿⣿⣿⣯⣟⢻⣜⡳⣸⣿⣿⣯⢳⢊⠥⠃⡌⠀⠄⠡⠘⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⡸⠀
-⢸⠐⡢⠀⠀⠙⠀⠀⠈⠐⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣛⢮⡳⠅⣿⣿⢾⡹⢌⡒⢉⡀⢊⠀⢂⠡⠌⢡⠀⠀⠀⠀⠀⠀⠀⠠⠑⠀
-⠀⢧⡁⠣⢀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⢹⡻⣝⠂⣿⣟⣯⢓⠣⠐⡁⠒⢀⠎⢀⠐⠈⡀⡄⢀⠀⠀⠀⡀⠀⠂⠀⠀
-⠀⠈⠳⣤⣀⡈⡐⣀⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡼⣟⡝⡂⢿⡘⡎⠍⡃⢁⡈⠈⢆⡘⢈⠐⠘⠀⡀⢂⠐⠠⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠉⠽⣢⣿⣿⣿⣿⣿⣻⣿⣿⣿⣿⣿⣿⣿⣿⡇⡯⣗⠆⢫⠱⣈⠰⠈⠀⠤⠉⡀⠜⡠⠂⠄⡐⢀⠂⠈⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢼⡛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢯⣷⣃⣯⣝⡒⢨⡑⠄⠰⠈⠠⢁⠂⠁⣀⠑⡈⠀⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⢰⡌⡻⢿⡿⣿⣿⣿⣿⢯⣯⢯⡷⣧⣏⡼⡅⢸⠥⡘⢀⠁⢀⠠⠈⠄⠀⠂⠄⠉⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷⢱⡸⡇⠐⢽⡿⣽⣻⡾⣯⣽⢶⡭⣗⡣⢘⡧⢌⠠⠈⢀⠀⡀⠀⠈⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⢠⣹⣧⡀⣼⣟⢶⣫⣿⡳⣽⢾⡵⣳⢣⠘⣮⢌⡐⡀⠠⠀⠄⠐⠀⡁⠂⠄⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⢠⡇⢹⢿⣾⡟⣯⢿⣽⢷⣝⣶⡿⣯⡳⢈⡇⡶⠠⠄⡀⠐⡈⠄⡀⠠⠁⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠣⣦⠉⣹⣇⣿⣿⢷⣻⢮⡷⣿⣳⢏⡄⣷⢣⢏⡔⠠⡁⠐⡐⢀⠐⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⠠⡄⢹⡟⣿⣿⠯⣷⣻⠝⠀⠉⠲⠀⡾⠀⠀⠈⡕⢠⠁⠠⡜⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢣⣄⠀⠀⠀⡇⢿⣿⢷⣻⡍⠀⠀⠀⠀⠁⠁⠀⠀⠐⠈⢌⠠⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠇⠀⠀⢠⢸⣿⣯⣧⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡡⠁⡘⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠄⠀⠀⠀⠘⢸⣞⣿⡇⠀⠀⠀⡀⠠⢀⠀⡁⠀⡀⢀⡔⣧⠄⠠⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣧⠀⠀⠀⠠⢸⡏⣿⡇⢀⠀⠄⠀⠐⡀⠂⡅⠀⠀⠃⣼⢿⠌⠀⡁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⢄⠀⠀⠀⣼⢷⡘⣷⡈⠤⠀⠀⠀⣁⠂⠇⡏⠀⣼⢏⣿⠂⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢸⣧⠘⢿⣷⡌⡂⠄⠈⡄⠀⡇⠀⢪⡽⣞⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠧⠀⠀⢸⢸⡿⠀⠘⢻⣿⣧⡙⢦⡘⢸⡼⣎⣿⡻⣜⠀⠂⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢓⡆⠀⢸⣿⡗⠀⠀⢺⠻⣿⡝⠲⣰⠸⡙⡥⠽⡱⢈⠀⠈⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠄⠸⢹⠇⠀⢰⢮⠓⠮⣿⢶⠶⢰⣯⢟⣣⠁⠀⡂⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠀⠀⣾⠃⠀⢨⢿⢠⣷⠈⢩⡍⠈⣲⠀⢰⣦⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠙⠀⠘⠁⠀⠘⠌⠸⡿⡄⣼⢛⠀⡿⠄⠸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⢠⠅⠰⠘⠃⠈⠁⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣹⠀⠀⠀⠀⠀⢦⠩⢰⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢘⡀⠄⠀⠂⠀⢊⠁⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠉⠀⠀⠀⠁⠆⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⢀⡀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⢸⡁⠀⠀⠀⠀⠀⠀⡄⠄⢘⣧⣦⣀⣠⡴
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠈⠄⠀⢀⠀⠈⠀⠂⠈⡈⠈⢧⠻⠝⠁
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠈⢤⠀⠀⠂⠀⠈⠃⠐⡄
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     ⠀⠀⠀⠀⠀⠑⠠⠠⠁⠐⠀⠈
-`,
-  `
-⠀⠀⠀⢀⡤⢤⢄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⣼⡅⠠⢀⡈⢀⣙⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠤⠤⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⢸⠀⠀⠀⠈⠙⠿⣝⢇⠀⠀⣀⣠⠤⠤⠤⠤⣤⡤⠚⠁⠀⠀⠀⠀⠀⠉⠢⡀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢧⡀⠀⠀⠠⣄⠈⢺⣺⡍⠀⠀⠀⠀⣠⠖⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡄⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠸⡆⢀⠘⣔⠄⠑⠂⠈⠀⡔⠤⠴⠚⡁⠀⠀⢀⠀⠀⠀⣠⠔⢶⡢⡀⠀⠠⡇⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢠⣇⠀⢃⡀⠁⠀⠀⠀⡸⠃⢀⡴⠊⢀⠀⠀⠈⢂⡤⠚⠁⠀⠀⠙⢿⠀⠉⡇⠀⠀⠀⠀⠀
-⠀⠀⠀⣠⠾⣹⢤⢼⡆⠀⠀⠀⠀⠀⠀⠈⢀⠞⠁⠀⢠⣴⠏⠀⠀⠀⠀⠀⠀⠸⡇⠀⢇⠀⠀⠀⠀⠀
-⠀⠀⣾⢡⣤⡈⠣⡀⠙⠒⠀⠀⠀⠀⣀⠤⠤⣤⠤⣌⠁⢛⡄⠀⠀⠀⠀⠀⠠⡀⢇⠀⠘⣆⠀⢀⡴⡆
-⠀⠀⣿⢻⣿⣿⣄⡸⠀⡆⠀⠒⣈⣩⣉⣉⡈⠉⠉⠢⣉⠉⠀⠀⠀⠀⠀⠀⠀⢣⠈⠢⣀⠈⠉⢁⡴⠃
-⠀⢀⢿⣿⣿⡿⠛⠁⠀⢻⣿⣿⣿⣿⣿⣿⣿⣷⣦⣄⣸⢿⠀⠀⠀⠀⠀⠀⠀⠸⡄⠀⡇⠉⠉⠁⠀⠀
-⣠⣞⠘⢛⡛⢻⣷⣤⡀⠈⡎⣿⣿⣿⣿⣿⣿⣿⣿⣿⠹⠏⠀⠀⠀⠀⠀⠀⠀⠀⠇⢰⡇⠀⠀⠀⠀⠀
-⠻⣌⠯⡁⢠⣸⣿⣿⣷⡄⠁⠈⢻⢿⣿⣿⣿⣿⠿⠋⠃⠰⣀⠀⠀⠀⠀⠀⠀⠀⠀⣾⠇⠀⠀⠀⠀⠀
-⠀⠀⠉⢻⠨⠟⠹⢿⣿⢣⠀⠀⢨⡧⣌⠉⠁⣀⠴⠊⠑⠀⡸⠛⠀⠀⠀⠀⠀⣸⢲⡟⠀⠀⠀⠀⠀⠀
-⠀⠀⣠⠏⠀⠀⠀⠉⠉⠁⠀⠐⠁⠀⠀⢉⣉⠁⠀⠀⢀⠔⢷⣄⠀⠀⠀⠀⢠⣻⡞⠀⠀⠀⠀⠀⠀⠀
-⠀⢠⠟⡦⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⢾⠉⠀⣹⣦⠤⣿⣿⡟⠁⠀⠀⠀⢀⣶⠟⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠈⠙⣦⣁⡎⢈⠏⢱⠚⢲⠔⢲⠲⡖⠖⣦⣿⡟⠀⣿⡿⠁⣠⢔⡤⠷⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢿⣟⠿⡿⠿⠶⢾⠶⠾⠶⠾⠞⢻⠋⠏⣸⠁⠀⡽⠓⠚⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⢸⡏⠳⠷⠴⠣⠜⠢⠜⠓⠛⠊⠀⢀⡴⠣⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⣏⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠊⠁⢀⣀⣀⠴⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠘⢦⡀⠀⠀⠀⠀⠀⠀⢀⣀⠴⠖⠒⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠉⠑⠒⠒⠐⠒⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-`,
-];
-
 export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
-  const [showFooter, setShowFooter] = useState(false);
   const navigate = useNavigate();
 
   const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
@@ -229,26 +50,26 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
   return (
     <div className="container">
-      <Header />
-      <main className="main">
-        <div className="scoreSection">
-          <TerminalText text={UI_TEXT.SCORE_LABEL.toLowerCase()} duration={TIMING.TERMINAL_TEXT_DURATION} />
-          <TerminalText text={score.toString()} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION} />
-        </div>
+      <Console>
+        <main className="main">
+          <div className="scoreSection">
+            <CommandLine duration={.5}>{UI_TEXT.SCORE_LABEL.toLowerCase()}</CommandLine>
+            <CommandLine duration={1} delay={.5}>{score.toString()}</CommandLine>
+          </div>
 
-        <AsciiArtTyping text={asciiArt} duration={TIMING.ASCII_ART_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 2} className="asciiArt" />
+          <AsciiArtTyping text={asciiArt} duration={1} delay={.5 * 5} className="asciiArt" />
 
-        <TerminalText text={sarcasticMessage} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 3} onAnimationEnd={() => setShowFooter(true)} />
 
-        {true && (
           <div className="actions">
-            <Button onClick={handleRetry}>{UI_TEXT.RETRY_BUTTON}</Button>
-            <Button onClick={handleShare} variant="secondary">
+            <Button onClick={handleRetry} duration={1} delay={1 * 4}>{UI_TEXT.RETRY_BUTTON}</Button>
+            <Button onClick={handleShare} duration={1} delay={1 * 4}>
               {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
-        )}
-      </main>
+
+          <CommandLine duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 5} keepCursorAnimation withCursor>{sarcasticMessage}</CommandLine>
+        </main>
+      </Console>
     </div>
   );
 };

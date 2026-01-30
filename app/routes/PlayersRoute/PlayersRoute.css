@@ -1,0 +1,7 @@
+.playersRouteRoot {
+    height: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
