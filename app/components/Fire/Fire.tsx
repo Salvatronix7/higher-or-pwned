@@ -68,7 +68,7 @@ export const FireSimulation: FC<FireSimulationProps> = memo(
                                 (y + 1) * width + Math.min(width - 1, sourceX + 1);
 
                             const heat =
-                                (prev[belowIndex] +
+                                (prev[belowIndex] as any +
                                     prev[belowLeftIndex] +
                                     prev[belowRightIndex]) /
                                 3;
