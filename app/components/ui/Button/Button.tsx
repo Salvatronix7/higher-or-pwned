@@ -8,37 +8,42 @@ import { addChars } from '~/utils/addChars';
 
 export const Button: FC<ButtonProps> = ({ children, subtitle, width = 3, height = 3, duration = 0, delay = 0, className, onClick }) => {
   const classNames = getClassNames({
+    [className || '']: !!className,
     buttonRoot: true,
-    className: !!className,
   });
+
+  const actualDuration = duration / height;
 
   return <button onClick={onClick} className={classNames}>
     <CommandLine
-      duration={duration}
+      duration={actualDuration}
       delay={delay}>
       {addChars(Array(children.length + 1).join("-"), "-", width)}
     </CommandLine>
     {height > 3 && Array(height - 3).fill(0).map((_, index) => (
-      <CommandLine key={index} duration={duration} delay={delay + ((index + 1) * duration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
+      <CommandLine key={index} duration={actualDuration} delay={delay + (index * actualDuration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
     ))}
     <CommandLine
-      duration={duration}
-      delay={delay + duration}>
+      duration={actualDuration}
+      delay={delay + (Array(height - 3).length * actualDuration)}>
       {`|${addChars(children, " ", width - 1)}|`}
     </CommandLine>
     {height > 3 && Array(height - 3).fill(0).map((_, index) => (
-      <CommandLine key={index} duration={duration} delay={delay + ((index + 1) * duration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
+      <CommandLine key={index} duration={actualDuration} delay={delay + ((index + Array(height - 3).length) * actualDuration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
     ))}
     <CommandLine
-      duration={duration}
-      delay={delay + (duration * 2)}>
+      duration={actualDuration}
+      delay={delay + ((Array(height - 3).length * 2) * actualDuration)}>
       {addChars(Array(children.length + 1).join("-"), "-", width)}
     </CommandLine>
-    {subtitle && <CommandLine
-      duration={duration}
-      delay={delay + (duration * 2)}>
-      {subtitle}
-    </CommandLine>}
+    {subtitle &&
+      <div className='subtitle'>
+        <CommandLine
+          duration={1}>
+          {subtitle}
+        </CommandLine>
+      </div>
+    }
   </button>
 }
 

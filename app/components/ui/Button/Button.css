@@ -1,14 +1,20 @@
 .buttonRoot {
   background: var(--color-background);
   color: var(--color-text-primary);
+  position: relative;
 
   &:hover {
-    background: var(--color-text-primary);
-    color: var(--color-background);
+    color: white;
   }
 
   &:active {
-    background: white;
-    color: var(--color-background);
+  color: var(--color-text-primary);
   }
+}
+
+.subtitle {
+  position: absolute;
+  top: calc(50% + 1.5rem);
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

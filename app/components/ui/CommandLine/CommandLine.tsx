@@ -4,7 +4,7 @@ import type { CommandLineProps } from './CommandLine.types';
 import './CommandLine.css';
 import { getClassNames } from '~/utils/getClassNames';
 
-export const CommandLine: FC<CommandLineProps> = memo(({ children, delay = 0, duration = 0, withCursor = false, keepCursorAnimation = false }) => {
+export const CommandLine: FC<CommandLineProps> = memo(({ children, className, delay = 0, duration = 0, withCursor = false, keepCursorAnimation = false }) => {
     const [showCursor, setShowCursor] = useState(false)
 
     useEffect(() => {
@@ -21,6 +21,7 @@ export const CommandLine: FC<CommandLineProps> = memo(({ children, delay = 0, du
     }
 
     const classNames = getClassNames({
+        [className || '']: !!className,
         'commandLineRoot': true,
         'with_cursor': withCursor && showCursor,
     });
