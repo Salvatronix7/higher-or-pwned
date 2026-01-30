@@ -14,29 +14,27 @@ export const Button: FC<ButtonProps> = ({ children, subtitle, width = 3, height 
 
   const actualDuration = duration / height;
 
-  var text = children.length % 2 === 0 ? `${children} ` : children;
-
   return <button onClick={onClick} className={classNames}>
     <CommandLine
       duration={actualDuration}
       delay={delay}>
-      {addChars(Array(text.length).join("-"), "-", width)}
+      {addChars(Array(children.length + 1).join("-"), "-", width)}
     </CommandLine>
     {height > 3 && Array(height - 3).fill(0).map((_, index) => (
-      <CommandLine key={index} duration={actualDuration} delay={delay + (index * actualDuration)}>{`|${addChars(Array(text.length).join(" "), " ", width - 1)}|`}</CommandLine>
+      <CommandLine key={index} duration={actualDuration} delay={delay + (index * actualDuration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
     ))}
     <CommandLine
       duration={actualDuration}
       delay={delay + (Array(height - 3).length * actualDuration)}>
-      {`|${addChars(text, " ", width - 1)}|`}
+      {`|${addChars(children, " ", width - 1)}|`}
     </CommandLine>
     {height > 3 && Array(height - 3).fill(0).map((_, index) => (
-      <CommandLine key={index} duration={actualDuration} delay={delay + ((index + Array(height - 3).length) * actualDuration)}>{`|${addChars(Array(text.length).join(" "), " ", width - 1)}|`}</CommandLine>
+      <CommandLine key={index} duration={actualDuration} delay={delay + ((index + 1 + Array(height - 3).length) * actualDuration)}>{`|${addChars(Array(children.length + 1).join(" "), " ", width - 1)}|`}</CommandLine>
     ))}
     <CommandLine
       duration={actualDuration}
       delay={delay + ((Array(height - 3).length * 2) * actualDuration)}>
-      {addChars(Array(text.length).join("-"), "-", width)}
+      {addChars(Array(children.length + 1).join("-"), "-", width)}
     </CommandLine>
     {subtitle &&
       <div className='subtitle'>
