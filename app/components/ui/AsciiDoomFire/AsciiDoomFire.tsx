@@ -7,6 +7,9 @@ interface AsciiDoomFireProps {
   readonly height?: number;
   readonly fps?: number;
   readonly charset?: string;
+  readonly decayMax?: number;
+  readonly driftRange?: number;
+  readonly flickerMax?: number;
   readonly className?: string;
 }
 
@@ -16,6 +19,9 @@ export const AsciiDoomFire: FC<AsciiDoomFireProps> = memo(
     height = 40,
     fps = 30,
     charset = ' .:-=+*#%@',
+    decayMax = 2,
+    driftRange = 1,
+    flickerMax = 2,
     className,
   }) => {
     const preRef = useRef<HTMLPreElement | null>(null);
@@ -61,7 +67,7 @@ export const AsciiDoomFire: FC<AsciiDoomFireProps> = memo(
 
         const bottomRowOffset = (clampedHeight - 1) * clampedWidth;
         for (let x = 0; x < clampedWidth; x += 1) {
-          const flicker = Math.floor(Math.random() * 3);
+          const flicker = Math.floor(Math.random() * (flickerMax + 1));
           buffer[bottomRowOffset + x] = Math.max(maxIntensity - flicker, 0);
         }
 
@@ -69,9 +75,15 @@ export const AsciiDoomFire: FC<AsciiDoomFireProps> = memo(
           const rowOffset = y * clampedWidth;
           const belowOffset = (y + 1) * clampedWidth;
           for (let x = 0; x < clampedWidth; x += 1) {
-            const drift = Math.floor(Math.random() * 3) - 1;
+            const driftSpan = Math.max(0, Math.floor(driftRange));
+            const drift =
+              driftSpan > 0
+                ? Math.floor(Math.random() * (driftSpan * 2 + 1)) - driftSpan
+                : 0;
             const sampleX = (x + drift + clampedWidth) % clampedWidth;
-            const decay = Math.floor(Math.random() * 3);
+            const decaySpan = Math.max(0, Math.floor(decayMax));
+            const decay =
+              decaySpan > 0 ? Math.floor(Math.random() * (decaySpan + 1)) : 0;
             const sourceIntensity = buffer[belowOffset + sampleX];
             const nextIntensity = Math.max(sourceIntensity - decay, 0);
             buffer[rowOffset + x] = nextIntensity;
@@ -87,7 +99,7 @@ export const AsciiDoomFire: FC<AsciiDoomFireProps> = memo(
       return () => {
         cancelAnimationFrame(animationFrame);
       };
-    }, [fps, height, lookup, width]);
+    }, [decayMax, driftRange, flickerMax, fps, height, lookup, width]);
 
     return (
       <pre
@@ -101,4 +113,4 @@ export const AsciiDoomFire: FC<AsciiDoomFireProps> = memo(
 AsciiDoomFire.displayName = 'AsciiDoomFire';
 
 // Demo usage:
-// <AsciiDoomFire width={90} height={45} fps={24} className="my-fire" />
+// <AsciiDoomFire width={90} height={45} fps={24} decayMax={3} driftRange={2} />
