@@ -55,16 +55,16 @@ export const PASSWORD_LIST = [
 export const MAX_ROUNDS_STAYED = 2;
 
 export const SARCASTIC_MESSAGES = [
-  'even my dad has a better password_',
-  'your password game is weaker than 123456_',
-  'ACCESS DENIED... to good passwords_',
-  'did you even try?_',
-  'a script kiddie could do better_',
-  'the matrix is disappointed_',
-  'your firewall just cried_',
-  'not even close, hacker wannabe_',
-  'password security level: potato_',
-  'brute force would be overkill here_',
+  'even my dad has a better password',
+  'your password game is weaker than 123456',
+  'ACCESS DENIED... to good passwords',
+  'did you even try?',
+  'a script kiddie could do better',
+  'the matrix is disappointed',
+  'your firewall just cried',
+  'not even close, hacker wannabe',
+  'password security level: potato',
+  'brute force would be overkill here',
 ] as const;
 
 export type PasswordValue = (typeof PASSWORD_LIST)[number];

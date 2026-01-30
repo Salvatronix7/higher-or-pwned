@@ -6,42 +6,5 @@
   padding: var(--spacing-md);
   cursor: pointer;
   user-select: none;
-  
-}
 
-.indexRouteContent {
-  text-align: center;
-}
-
-.indexRouteTitle {
-  font-size: var(--font-size-2xl);
-  font-weight: normal;
-  letter-spacing: 0.1em;
-  margin-bottom: var(--spacing-xl);
-}
-
-@media (min-width: 768px) {
-  .indexRouteTitle {
-    font-size: var(--font-size-3xl);
-  }
-}
-
-.indexRouteGlow {
-  text-shadow: var(--glow-text);
-}
-
-.indexRoutePrompt {
-  font-size: var(--font-size-base);
-  color: var(--color-terminal-green-dim);
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0.5;
-  }
 }

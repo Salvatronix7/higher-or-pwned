@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import type { FC } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { AsciiArtTyping, Button } from "~/components";
+import { AsciiArtTyping, Button, CommandLine } from "~/components";
 import { TerminalText } from "~/components/ui/TerminalText";
 import {
   ROUTES,
@@ -12,6 +12,7 @@ import {
 } from "~/constants";
 import { getRandomItem } from "~/utils";
 import "./ResultRoute.css";
+import { Console } from "~/components/ui/Console/Console";
 
 interface ResultRouteProps {
   score: number;
@@ -229,26 +230,26 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
   return (
     <div className="container">
-      <Header />
-      <main className="main">
-        <div className="scoreSection">
-          <TerminalText text={UI_TEXT.SCORE_LABEL.toLowerCase()} duration={TIMING.TERMINAL_TEXT_DURATION} />
-          <TerminalText text={score.toString()} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION} />
-        </div>
+      <Console>
+        <main className="main">
+          <div className="scoreSection">
+            <CommandLine duration={TIMING.TERMINAL_TEXT_DURATION}>{UI_TEXT.SCORE_LABEL.toLowerCase()}</CommandLine>
+            <CommandLine duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION}>{score.toString()}</CommandLine>
+          </div>
 
-        <AsciiArtTyping text={asciiArt} duration={TIMING.ASCII_ART_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 2} className="asciiArt" />
+          <AsciiArtTyping text={asciiArt} duration={TIMING.ASCII_ART_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 3} className="asciiArt" />
 
-        <TerminalText text={sarcasticMessage} duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 3} onAnimationEnd={() => setShowFooter(true)} />
 
-        {true && (
           <div className="actions">
             <Button onClick={handleRetry}>{UI_TEXT.RETRY_BUTTON}</Button>
-            <Button onClick={handleShare} variant="secondary">
+            <Button onClick={handleShare}>
               {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
-        )}
-      </main>
+
+          <CommandLine duration={TIMING.TERMINAL_TEXT_DURATION} delay={TIMING.TERMINAL_TEXT_DURATION * 5} keepCursorAnimation withCursor>{sarcasticMessage}</CommandLine>
+        </main>
+      </Console>
     </div>
   );
 };

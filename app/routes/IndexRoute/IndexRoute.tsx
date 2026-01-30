@@ -7,6 +7,7 @@ import type { IndexRouteProps } from './IndexRoute.types';
 import { isStartKey } from './IndexRoute.utils';
 import './IndexRoute.css';
 import { CommandLine } from '~/components/ui/CommandLine/CommandLine';
+import { Console } from '~/components/ui/Console/Console';
 
 export const IndexRoute: FC<IndexRouteProps> = () => {
   const navigate = useNavigate();
@@ -31,10 +32,17 @@ export const IndexRoute: FC<IndexRouteProps> = () => {
 
   return (
     <div className='indexRouteContainer' onClick={handleStart}>
-      <div>
-        <CommandLine duration={1}>Higher || Pwned</CommandLine>
-        <CommandLine duration={.5} delay={1} keepCursorOnAnimationEnd>Press any key to continue</CommandLine>
-      </div>
+      <Console>
+        <CommandLine duration={1}>Welcome to</CommandLine>
+        <br />
+        <CommandLine duration={2} delay={2}>Higher || Pwned</CommandLine>
+        <br />
+        <br />
+        <br />
+        <br />
+        <CommandLine>                                            </CommandLine>
+        <CommandLine duration={.75} delay={6} keepCursorAnimation withCursor>Press any key to continue</CommandLine>
+      </Console>
     </div>
   );
 };

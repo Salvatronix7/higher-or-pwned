@@ -6,35 +6,21 @@ import { UI_TEXT, TIMING } from '~/constants';
 import type { PasswordCardProps } from './PasswordCard.types';
 import { getCardClassName } from './PasswordCard.utils';
 import './PasswordCard.css';
+import { Button, CommandLine } from '~/components/ui';
 
 export const PasswordCard: FC<PasswordCardProps> = memo(
   ({ password, guess, isLoading, isDisabled, showCount, position }) => {
     return (
-      <button
-        type='button'
-        className={getCardClassName(position)}
+      <Button
+        delay={1}
         onClick={guess}
-        disabled={isLoading || isDisabled}
+        subtitle={showCount ? formatNumber(password.pwnedCount || 0).toString() : undefined}
+        className={getCardClassName(position)}
+        width={20}
+        height={20}
       >
-        <div className='passwordCardBorder'>
-          <div className='passwordCardContent'>
-            <TerminalText
-              text={password.value}
-              key={password.value}
-              duration={TIMING.TERMINAL_TEXT_DURATION}
-              className='passwordCardValue'
-            />
-            {showCount && password.pwnedCount !== null && (
-              <TerminalText
-                text={formatNumber(password.pwnedCount).toString()}
-                duration={TIMING.TERMINAL_TEXT_DURATION}
-                className='passwordCardCount'
-              />
-            )}
-            {isLoading && <span className='passwordCardLoading'>{UI_TEXT.LOADING}</span>}
-          </div>
-        </div>
-      </button>
+        {password.value}
+      </Button>
     );
   },
 );

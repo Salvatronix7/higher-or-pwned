@@ -1,0 +1,40 @@
+.consoleRoot {
+    background-color: var(--color-console-background);
+    border: 2px solid var(--color-border-dim);
+    border-radius: 8px;
+    overflow: hidden;
+    height: fit-content;
+
+}
+
+.consoleHeader {
+    gap: 1rem;
+    display: grid;
+    grid-auto-flow: column;
+    place-items: center;
+    border-bottom: 2px solid var(--color-border-dim);
+    font-size: 1.5rem;
+    width: 100%;
+    padding: 0 .5rem;
+}
+
+.consoleHeaderName {
+    place-self: center start;
+    font-size: 1rem;
+}
+
+.consoleHeaderButtons {
+    display: grid;
+    grid-auto-flow: column;
+    place-items: center;
+    place-self: end;
+    gap: 1rem;
+
+    &>div:last-child {
+        font-size: 2rem;
+    }
+}
+
+.consoleBody {
+    padding: .5rem;
+}

@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useRef } from 'react';
 import type { FC } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { PasswordCard } from '~/components';
+import { CommandLine, PasswordCard } from '~/components';
 import { TerminalText } from '~/components/ui/TerminalText';
 import { useGame } from '~/hooks';
 import {
@@ -14,6 +14,7 @@ import {
 import type { GuessChoice } from '~/types';
 import type { ScoreDisplayProps } from './GameRoute.types';
 import './GameRoute.css';
+import { Console } from '~/components/ui/Console/Console';
 
 const Header: FC = memo(() => (
   <header className='gameRouteHeader'>
@@ -24,9 +25,11 @@ const Header: FC = memo(() => (
 Header.displayName = 'Header';
 
 const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
-  <div className='gameRouteScoreContainer'>
-    <span className='gameRouteScoreLabel'>{UI_TEXT.SCORE_LABEL}</span>
-    <span className='gameRouteScoreValue'>{score}</span>
+  <div>
+    <CommandLine>{`                     `}</CommandLine>
+    <CommandLine>{`       ${UI_TEXT.SCORE_LABEL}       `}</CommandLine>
+    <CommandLine>{`         ${score}       `}</CommandLine>
+    <CommandLine>{`                     `}</CommandLine>
   </div>
 ));
 
@@ -56,7 +59,7 @@ export const GameRoute: FC = () => {
       }
       revealTimeoutRef.current = setTimeout(() => {
         makeGuess(choice);
-      }, TIMING.REVEAL_DELAY);
+      }, TIMING.REVEAL_DELAY * 1000);
     },
     [makeGuess, startReveal],
   );
@@ -80,11 +83,11 @@ export const GameRoute: FC = () => {
     };
   }, []);
 
+
   return (
-    <div className='gameRouteContainer'>
-      <Header />
-      <main className='gameRouteMain'>
-        <div className='gameRouteBoard'>
+    <main className='gameRouteContainer'>
+      <Console>
+        <div className='gameBoard'>
           <PasswordCard
             key={leftPassword.value}
             password={leftPassword}
@@ -105,8 +108,7 @@ export const GameRoute: FC = () => {
             position={GUESS_CHOICES.RIGHT}
           />
         </div>
-        <p className='gameRouteInstruction'>{UI_TEXT.GAME_INSTRUCTION}</p>
-      </main>
-    </div>
+      </Console >
+    </main >
   );
 };

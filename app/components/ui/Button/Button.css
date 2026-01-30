@@ -1,49 +1,14 @@
 .buttonRoot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-xs);
-  color: var(--color-terminal-green);
-  background: transparent;
-  transition: all var(--transition-fast);
-}
+  background: var(--color-background);
+  color: var(--color-text-primary);
 
-.buttonRoot:hover:not(:disabled) {
-  text-shadow: var(--glow-text);
-  transform: scale(1.05);
-}
+  &:hover {
+    background: var(--color-text-primary);
+    color: var(--color-background);
+  }
 
-.buttonRoot:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.buttonRoot:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.buttonBorder {
-  color: var(--color-terminal-green-dim);
-  letter-spacing: 0.05em;
-}
-
-.buttonContent {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: var(--font-size-base);
-}
-
-.buttonPrimary:hover:not(:disabled) .buttonBorder {
-  color: var(--color-terminal-green);
-}
-
-.buttonSecondary {
-  color: var(--color-terminal-green-dim);
-}
-
-.buttonSecondary:hover:not(:disabled) {
-  color: var(--color-terminal-green);
-}
-
-.buttonSecondary:hover:not(:disabled) .buttonBorder {
-  color: var(--color-terminal-green);
+  &:active {
+    background: white;
+    color: var(--color-background);
+  }
 }
