@@ -1,3 +1,5 @@
 export const addChars = (str: string, char: string, count: number): string => {
-    return `${Array(count + 1).join(char)}${str}${Array(count + 1).join(char)}`;
+    let actualCount = Math.floor((count - str.length) / 2);
+    if (actualCount < 0) actualCount = 2;
+    return `${Array(actualCount).join(char)}${str}${Array(actualCount).join(char)}`;
 }

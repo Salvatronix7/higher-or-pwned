@@ -1,6 +1,6 @@
 .consoleRoot {
     background-color: var(--color-console-background);
-    border: 2px solid var(--color-border-dim);
+    border: 1px solid var(--color-border-dim);
     border-radius: 8px;
     overflow: hidden;
     height: fit-content;
@@ -12,7 +12,7 @@
     display: grid;
     grid-auto-flow: column;
     place-items: center;
-    border-bottom: 2px solid var(--color-border-dim);
+    border-bottom: 1px solid var(--color-border-dim);
     font-size: 1.5rem;
     width: 100%;
     padding: 0 .5rem;
