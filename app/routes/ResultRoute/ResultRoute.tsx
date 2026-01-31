@@ -1,21 +1,18 @@
-import { memo, useCallback, useMemo, useState } from "react";
-import type { FC } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import type { FC } from "react";
+import { useCallback, useMemo } from "react";
 import { AsciiArtTyping, Button, CommandLine } from "~/components";
-import { TerminalText } from "~/components/ui/TerminalText";
+import { FireSimulation } from "~/components/Fire/Fire";
+import { Console } from "~/components/ui/Console/Console";
 import {
+  createShareText,
   ROUTES,
   SARCASTIC_MESSAGES,
-  UI_TEXT,
-  TIMING,
-  createShareText,
-  RESULT_ASCII_ART,
+  UI_TEXT
 } from "~/constants";
 import { getRandomItem } from "~/utils";
-import "./ResultRoute.css";
-import { Console } from "~/components/ui/Console/Console";
 import { ASCII_ART } from "./ResultRoute.constants";
-import { FireSimulation } from "~/components/Fire/Fire";
+import "./ResultRoute.css";
 
 interface ResultRouteProps {
   score: number;
