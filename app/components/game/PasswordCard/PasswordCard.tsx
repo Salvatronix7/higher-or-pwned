@@ -16,8 +16,8 @@ export const PasswordCard: FC<PasswordCardProps> = memo(
         duration={.5}
         onClick={guess}
         subtitle={showCount ? formatNumber(password.pwnedCount || 0).toString() : undefined}
-        width={45}
-        height={30}
+        width={30}
+        height={15}
       >
         {password.value}
       </Button>

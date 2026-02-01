@@ -68,8 +68,8 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
 
           <div className="actions">
-            <Button onClick={handleRetry} duration={.5} delay={2}>{UI_TEXT.RETRY_BUTTON}</Button>
-            <Button onClick={handleShare} duration={.5} delay={2}>
+            <Button onClick={handleRetry} duration={.5} delay={2} width={10}>{UI_TEXT.RETRY_BUTTON}</Button>
+            <Button onClick={handleShare} duration={.5} delay={2} width={10}>
               {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
