@@ -26,21 +26,34 @@ const Header: FC = memo(() => (
 Header.displayName = 'Header';
 
 const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
-  <div>
-    <CommandLine>{`                     `}</CommandLine>
+  <div className="scoreDisplayRoot">
     <CommandLine>{`       ${UI_TEXT.SCORE_LABEL}       `}</CommandLine>
     <CommandLine>{`         ${score}       `}</CommandLine>
-    <CommandLine>{`                     `}</CommandLine>
   </div>
 ));
 
 ScoreDisplay.displayName = 'ScoreDisplay';
 
-export const GameRoute: FC = () => {
+type FireConfig = Record<number, { decay: number; sparkRate: number; cooling: number, fps?: number }>
 
-  const [decay, setDecay] = useState(0.01);
-  const [sparkRate, setSparkRate] = useState(.01);
-  const [cooling, setCooling] = useState(0.01);
+//decay 0.09 - 0.01
+
+const fireParameters: FireConfig = {
+  // [0]: { decay: 0.01, sparkRate: 0.9, cooling: 0, fps: 40 },
+  [1]: { decay: 0.1, sparkRate: 0, cooling: 0, fps: 24 },
+  [5]: { decay: 0.5, sparkRate: .25, cooling: 0, fps: 26 },
+  [10]: { decay: 0.2, sparkRate: .75, cooling: 0, fps: 28 },
+  [15]: { decay: 0.1, sparkRate: 0.75, cooling: 0, fps: 30 },
+  [20]: { decay: 0.05, sparkRate: 0.75, cooling: 0, fps: 32 },
+  [25]: { decay: 0.02, sparkRate: 0.8, cooling: 0, fps: 34 },
+  [30]: { decay: 0.01, sparkRate: 0.8, cooling: 0, fps: 36 },
+  [35]: { decay: 0.01, sparkRate: 0.9, cooling: 0, fps: 38 },
+  [40]: { decay: 0.01, sparkRate: 1, cooling: 0, fps: 40 },
+  [45]: { decay: 0.0, sparkRate: 1, cooling: 0, fps: 40 },
+}
+
+export const GameRoute: FC = () => {
+  const fireConfigRef = useRef<FireConfig>();
 
   const navigate = useNavigate();
   const {
@@ -53,29 +66,11 @@ export const GameRoute: FC = () => {
     makeGuess,
     startReveal,
   } = useGame();
+
   const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const setFireParameters = () => {
-    let oldSparkRate = sparkRate;
-
-    setDecay(0.01);
-    setSparkRate(prev => {
-      oldSparkRate = prev
-      return prev + 0.1 
-    });
-    setCooling(0.01);
-
-    setTimeout(() => {
-      setDecay(0.01);
-      setSparkRate(oldSparkRate + 0.01);
-      setCooling(0.01);
-    }, 500);
-    // console.log('Updated fire parameters:', { decay, sparkRate, cooling });
-  }
 
   const handleGuess = useCallback(
     (choice: GuessChoice) => {
-      setFireParameters();
       if (!startReveal()) {
         return;
       }
@@ -108,18 +103,18 @@ export const GameRoute: FC = () => {
     };
   }, []);
 
+  fireConfigRef.current = fireParameters[score] || fireConfigRef.current
+
   return (
     <main className='gameRouteContainer'>
-      <FireSimulation
+      {fireConfigRef.current && <FireSimulation
         width={200}
-        height={75}
+        height={150}
         intensity={1}
-        decay={decay}
-        sparkRate={sparkRate}
-        cooling={cooling}
-        fps={24}
-      />
-      <Console>
+        {...fireConfigRef.current}
+      // fps={24}
+      />}
+      <Console score={score}>
         <div className='gameBoard'>
           <PasswordCard
             key={leftPassword.value}

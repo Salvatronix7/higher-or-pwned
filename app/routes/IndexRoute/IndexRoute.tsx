@@ -33,9 +33,9 @@ export const IndexRoute: FC<IndexRouteProps> = () => {
   return (
     <div className='indexRouteContainer' onClick={handleStart}>
       <Console>
-        <CommandLine duration={1}>Welcome to</CommandLine>
+        <CommandLine duration={1} withCursor>Welcome to</CommandLine>
         <br />
-        <CommandLine duration={2} delay={2}>Higher || Pwned</CommandLine>
+        <CommandLine duration={2} delay={2} withCursor>Higher || Pwned</CommandLine>
         <br />
         <br />
         <br />

@@ -31,8 +31,14 @@
     gap: 1rem;
     background-color: var(--color-console-background);
 
-    &>div:last-child {
+    .minimizeButton {
+        scale: 1.5;
+    }
+
+    .closeButton {
         font-size: 2rem;
+        rotate: 45deg;
+        scale: 1.2;
     }
 }
 

@@ -12,10 +12,10 @@ export const PasswordCard: FC<PasswordCardProps> = memo(
   ({ password, guess, isLoading, isDisabled, showCount, position }) => {
     return (
       <Button
+        className="passwordCardRoot"
         duration={.5}
         onClick={guess}
         subtitle={showCount ? formatNumber(password.pwnedCount || 0).toString() : undefined}
-        className={getCardClassName(position)}
         width={45}
         height={30}
       >

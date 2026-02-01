@@ -4,4 +4,10 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+
+    .consoleBody {
+        display: grid;
+        place-items: center;
+        padding: 3rem 10rem;
+    }
 }

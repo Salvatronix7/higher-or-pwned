@@ -42,5 +42,5 @@ export const CommandLine: FC<CommandLineProps> = memo(({ children, className, de
         onAnimationEnd={onAnimationEnd}
     >
         {children}
-    </div>;
+    </div>
 });
