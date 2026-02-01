@@ -1,9 +1,13 @@
 .container {
   margin: auto;
-  /* min-height: 100vh; */
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
+
+
+  @media only screen and (max-width: 1045px) {
+    /* Find better mediaquery */
+    font-size: 12px;
+  }
 }
 
 .header {
@@ -17,7 +21,7 @@
   letter-spacing: 0.1em;
 }
 
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .title {
     font-size: var(--font-size-xl);
   }
@@ -42,7 +46,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-lg) 0;
 }
 
 .scoreSection {
@@ -69,6 +73,14 @@
   color: var(--color-terminal-green);
   /* text-shadow: var(--glow-text); */
   white-space: pre;
+
+  @media only screen and (max-width: 1045px) {
+    /* Find better mediaquery */
+    font-size: 8px;
+    &>div{
+      height: .6rem;
+    }
+  }
 }
 
 .message {
@@ -76,12 +88,6 @@
   color: var(--color-terminal-green);
   text-align: center;
   max-width: 400px;
-}
-
-@media (min-width: 768px) {
-  .message {
-    font-size: var(--font-size-lg);
-  }
 }
 
 .actions {
