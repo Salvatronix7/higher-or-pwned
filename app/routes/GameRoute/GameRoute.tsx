@@ -15,7 +15,6 @@ import { useGame } from '~/hooks';
 import type { GuessChoice } from '~/types';
 import './GameRoute.css';
 import type { ScoreDisplayProps } from './GameRoute.types';
-import { FireSimulation } from '~/components/Fire/Fire';
 
 const Header: FC = memo(() => (
   <header className='gameRouteHeader'>
@@ -34,27 +33,7 @@ const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
 
 ScoreDisplay.displayName = 'ScoreDisplay';
 
-type FireConfig = Record<number, { decay: number; sparkRate: number; cooling: number, fps?: number }>
-
-//decay 0.09 - 0.01
-
-const fireParameters: FireConfig = {
-  // [0]: { decay: 0.01, sparkRate: 0.9, cooling: 0, fps: 40 },
-  [1]: { decay: 0.1, sparkRate: 0, cooling: 0, fps: 24 },
-  [5]: { decay: 0.5, sparkRate: .25, cooling: 0, fps: 26 },
-  [10]: { decay: 0.2, sparkRate: .75, cooling: 0, fps: 28 },
-  [15]: { decay: 0.1, sparkRate: 0.75, cooling: 0, fps: 30 },
-  [20]: { decay: 0.05, sparkRate: 0.75, cooling: 0, fps: 32 },
-  [25]: { decay: 0.02, sparkRate: 0.8, cooling: 0, fps: 34 },
-  [30]: { decay: 0.01, sparkRate: 0.8, cooling: 0, fps: 36 },
-  [35]: { decay: 0.01, sparkRate: 0.9, cooling: 0, fps: 38 },
-  [40]: { decay: 0.01, sparkRate: 1, cooling: 0, fps: 40 },
-  [45]: { decay: 0.0, sparkRate: 1, cooling: 0, fps: 40 },
-}
-
 export const GameRoute: FC = () => {
-  const fireConfigRef = useRef<FireConfig>();
-
   const navigate = useNavigate();
   const {
     leftPassword,
@@ -103,17 +82,8 @@ export const GameRoute: FC = () => {
     };
   }, []);
 
-  fireConfigRef.current = fireParameters[score] || fireConfigRef.current
-
   return (
     <main className='gameRouteContainer'>
-      {fireConfigRef.current && <FireSimulation
-        width={200}
-        height={150}
-        intensity={1}
-        {...fireConfigRef.current}
-      // fps={24}
-      />}
       <Console score={score}>
         <div className='gameBoard'>
           <PasswordCard

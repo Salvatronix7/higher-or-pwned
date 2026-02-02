@@ -1,0 +1,27 @@
+.fireworksSimulation {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Fira Code", "Fira Mono", "SFMono-Regular", ui-monospace,
+    "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: var(--fireworks-cell-size, 12px);
+  line-height: var(--fireworks-cell-size, 12px);
+  letter-spacing: 0;
+  white-space: pre;
+  user-select: none;
+  color: var(--color-text-primary);
+  background-image: linear-gradient(
+    120deg,
+    #ffeeb0,
+    #ff84d8,
+    #7df9ff,
+    #9aff7b,
+    #ffd36b
+  );
+  color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}

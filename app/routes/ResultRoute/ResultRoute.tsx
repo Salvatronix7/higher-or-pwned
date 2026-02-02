@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 import { AsciiArtTyping, Button, CommandLine } from "~/components";
-import { FireSimulation } from "~/components/Fire/Fire";
+import { FireworksSimulation } from "~/components/Fireworks/Fireworks";
 import { Console } from "~/components/ui/Console/Console";
 import {
   createShareText,
@@ -17,6 +17,22 @@ import "./ResultRoute.css";
 interface ResultRouteProps {
   score: number;
 }
+
+type FireworksConfig = {
+  rocketRate: number;
+  burstSize: number;
+  spread: number;
+  fps?: number;
+};
+
+const fireworksParameters: Array<{ minScore: number; config: FireworksConfig }> = [
+  { minScore: 0, config: { rocketRate: 0.04, burstSize: 16, spread: 1.25, fps: 24 } },
+  { minScore: 5, config: { rocketRate: 0.06, burstSize: 18, spread: 1.35, fps: 26 } },
+  { minScore: 10, config: { rocketRate: 0.08, burstSize: 22, spread: 1.45, fps: 28 } },
+  { minScore: 20, config: { rocketRate: 0.11, burstSize: 26, spread: 1.6, fps: 30 } },
+  { minScore: 30, config: { rocketRate: 0.14, burstSize: 30, spread: 1.7, fps: 34 } },
+  { minScore: 40, config: { rocketRate: 0.18, burstSize: 34, spread: 1.8, fps: 36 } },
+];
 
 export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
   const navigate = useNavigate();
@@ -45,17 +61,17 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
   }, [score]);
 
   const asciiArt = useMemo(() => getRandomItem(ASCII_ART), []);
+  const fireworksConfig = useMemo(() => {
+    const sorted = [...fireworksParameters].sort((a, b) => b.minScore - a.minScore);
+    return sorted.find((entry) => score >= entry.minScore)?.config ?? fireworksParameters[0]?.config;
+  }, [score]);
 
   return (
     <div className="container">
-      <FireSimulation
+      <FireworksSimulation
         width={200}
-        height={75}
-        intensity={1}
-        decay={0}
-        sparkRate={0.2}
-        cooling={0.01}
-        fps={24}
+        height={120}
+        {...fireworksConfig}
       />
       <Console>
         <main className="main">
