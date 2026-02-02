@@ -6,6 +6,7 @@ import { FireSimulation } from "~/components/Fire/Fire";
 import { Console } from "~/components/ui/Console/Console";
 import {
   createShareText,
+  getFireConfigForScore,
   ROUTES,
   SARCASTIC_MESSAGES,
   UI_TEXT
@@ -45,18 +46,18 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
   }, [score]);
 
   const asciiArt = useMemo(() => getRandomItem(ASCII_ART), []);
+  const fireConfig = useMemo(() => getFireConfigForScore(score), [score]);
 
   return (
     <div className="container">
-      <FireSimulation
-        width={200}
-        height={75}
-        intensity={1}
-        decay={0}
-        sparkRate={0.2}
-        cooling={0.01}
-        fps={24}
-      />
+      {fireConfig && (
+        <FireSimulation
+          width={200}
+          height={75}
+          intensity={1}
+          {...fireConfig}
+        />
+      )}
       <Console>
         <main className="main">
           <div className="scoreSection">
