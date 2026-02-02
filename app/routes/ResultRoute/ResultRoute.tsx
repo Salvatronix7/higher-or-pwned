@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { FC } from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AsciiArtTyping, Button, CommandLine } from "~/components";
 import { FireworksSimulation } from "~/components/Fireworks/Fireworks";
 import { Console } from "~/components/ui/Console/Console";
@@ -17,6 +17,8 @@ import "./ResultRoute.css";
 interface ResultRouteProps {
   score: number;
 }
+
+const HIGH_SCORE_STORAGE_KEY = "higher-or-pwned:high-score";
 
 type FireworksConfig = {
   rocketRate: number;
@@ -36,6 +38,8 @@ const fireworksParameters: Array<{ minScore: number; config: FireworksConfig }> 
 
 export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
   const navigate = useNavigate();
+  const [highScore, setHighScore] = useState(0);
+  const [isNewHighScore, setIsNewHighScore] = useState(false);
 
   const sarcasticMessage = useMemo(() => getRandomItem(SARCASTIC_MESSAGES), []);
 
@@ -65,19 +69,42 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
     const sorted = [...fireworksParameters].sort((a, b) => b.minScore - a.minScore);
     return sorted.find((entry) => score >= entry.minScore)?.config ?? fireworksParameters[0]?.config;
   }, [score]);
+  const showFireworks = isNewHighScore && score > 0;
+
+  useEffect(() => {
+    const stored = Number(window.localStorage.getItem(HIGH_SCORE_STORAGE_KEY) ?? 0);
+    const nextHighScore = Number.isFinite(stored) ? stored : 0;
+    const didSetNewHighScore = score > 0 && score > nextHighScore;
+
+    if (didSetNewHighScore) {
+      window.localStorage.setItem(HIGH_SCORE_STORAGE_KEY, score.toString());
+      setHighScore(score);
+      setIsNewHighScore(true);
+    } else {
+      setHighScore(Math.max(nextHighScore, score));
+      setIsNewHighScore(false);
+    }
+  }, [score]);
 
   return (
     <div className="container">
-      <FireworksSimulation
-        width={200}
-        height={120}
-        {...fireworksConfig}
-      />
+      {showFireworks && (
+        <FireworksSimulation
+          width={200}
+          height={120}
+          {...fireworksConfig}
+        />
+      )}
       <Console>
         <main className="main">
           <div className="scoreSection">
             <CommandLine duration={.5}>{UI_TEXT.SCORE_LABEL.toLowerCase()}</CommandLine>
             <CommandLine duration={.5} delay={.5}>{score.toString()}</CommandLine>
+            {isNewHighScore && (
+              <CommandLine duration={.5} delay={1}>
+                {`new high score: ${highScore}`}
+              </CommandLine>
+            )}
           </div>
 
           <AsciiArtTyping text={asciiArt} duration={.5} delay={1.5} className="asciiArt" />
