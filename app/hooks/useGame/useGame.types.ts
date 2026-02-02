@@ -4,6 +4,7 @@ export interface UseGameReturn {
   readonly leftPassword: Password;
   readonly rightPassword: Password;
   readonly score: number;
+  readonly timeRemaining: number;
   readonly gameState: GameState;
   readonly isLoading: boolean;
   readonly gameResult: GameResult | null;

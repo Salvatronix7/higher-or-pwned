@@ -25,10 +25,12 @@ const Header: FC = memo(() => (
 
 Header.displayName = 'Header';
 
-const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
+const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score, timeRemaining }) => (
   <div className="scoreDisplayRoot">
     <CommandLine>{`       ${UI_TEXT.SCORE_LABEL}       `}</CommandLine>
     <CommandLine>{`         ${score}       `}</CommandLine>
+    <CommandLine>{`       ${UI_TEXT.TIME_LABEL}       `}</CommandLine>
+    <CommandLine>{`        ${timeRemaining}s      `}</CommandLine>
   </div>
 ));
 
@@ -60,6 +62,7 @@ export const GameRoute: FC = () => {
     leftPassword,
     rightPassword,
     score,
+    timeRemaining,
     gameState,
     isLoading,
     gameResult,
@@ -125,7 +128,7 @@ export const GameRoute: FC = () => {
             showCount={gameState !== GAME_STATES.PLAYING}
             position={GUESS_CHOICES.LEFT}
           />
-          <ScoreDisplay score={score} />
+          <ScoreDisplay score={score} timeRemaining={timeRemaining} />
           <PasswordCard
             key={rightPassword.value}
             password={rightPassword}

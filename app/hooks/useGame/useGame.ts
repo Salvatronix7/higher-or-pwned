@@ -1,6 +1,11 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePwnedCount } from '~/queries';
-import { MAX_ROUNDS_STAYED, GAME_STATES, GUESS_CHOICES } from '~/constants';
+import {
+  MAX_ROUNDS_STAYED,
+  GAME_STATES,
+  GUESS_CHOICES,
+  TIMING,
+} from '~/constants';
 import type { GameResult, GuessChoice, Password } from '~/types';
 import { INITIAL_GAME_STATE } from './useGame.constants';
 import type { UseGameReturn } from './useGame.types';
@@ -17,6 +22,9 @@ export const useGame = (): UseGameReturn => {
     () => new Set([leftPassword.value, rightPassword.value])
   );
   const [score, setScore] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(
+    TIMING.GAME_START_SECONDS
+  );
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
 
@@ -74,6 +82,9 @@ export const useGame = (): UseGameReturn => {
       setGameState(INITIAL_GAME_STATE);
       const newScore = score + 1;
       setScore(newScore);
+      setTimeRemaining(
+        (currentTime) => currentTime + TIMING.GAME_BONUS_SECONDS
+      );
 
       const updatedUsed = new Set(usedPasswords);
       updatedUsed.add(leftPassword.value);
@@ -127,6 +138,44 @@ export const useGame = (): UseGameReturn => {
     ]
   );
 
+  useEffect(() => {
+    if (gameState === GAME_STATES.GAME_OVER) {
+      return;
+    }
+
+    const timerId = window.setInterval(() => {
+      setTimeRemaining((currentTime) => {
+        if (currentTime <= 1) {
+          const leftCount = leftQuery.data ?? 0;
+          const rightCount = rightQuery.data ?? 0;
+          const correctChoice: GuessChoice =
+            leftCount >= rightCount ? GUESS_CHOICES.LEFT : GUESS_CHOICES.RIGHT;
+
+          setGameState(GAME_STATES.GAME_OVER);
+          setGameResult({
+            score,
+            lastLeftPassword: leftPassword.value,
+            lastRightPassword: rightPassword.value,
+            correctAnswer: correctChoice,
+          });
+
+          return 0;
+        }
+
+        return currentTime - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(timerId);
+  }, [
+    gameState,
+    leftQuery.data,
+    rightQuery.data,
+    leftPassword.value,
+    rightPassword.value,
+    score,
+  ]);
+
   const resetGame = useCallback(() => {
     const newLeft = createInitialPassword();
     const newRight = createInitialPassword([newLeft.value]);
@@ -134,6 +183,7 @@ export const useGame = (): UseGameReturn => {
     setRightPassword(newRight);
     setUsedPasswords(new Set([newLeft.value, newRight.value]));
     setScore(0);
+    setTimeRemaining(TIMING.GAME_START_SECONDS);
     setGameState(INITIAL_GAME_STATE);
     setGameResult(null);
   }, []);
@@ -142,6 +192,7 @@ export const useGame = (): UseGameReturn => {
     leftPassword: leftWithCount,
     rightPassword: rightWithCount,
     score,
+    timeRemaining,
     gameState,
     isLoading,
     gameResult,
