@@ -1,31 +1,24 @@
-import { useNavigate } from '@tanstack/react-router';
-import type { FC } from 'react';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CommandLine } from '~/components/ui/CommandLine';
-import { PasswordCard } from '~/components/game/PasswordCard';
-import { Console } from '~/components/ui/Console/Console';
-import { TerminalText } from '~/components/ui/TerminalText';
-import {
-  GAME_STATES,
-  GUESS_CHOICES,
-  getFireConfigForScore,
-  ROUTES,
-  TIMING,
-  UI_TEXT,
-} from '~/constants';
-import { useGame } from '~/hooks';
-import type { GuessChoice } from '~/types';
-import './GameRoute.css';
-import type { ScoreDisplayProps } from './GameRoute.types';
-import { FireSimulation } from '~/components/Fire/Fire';
+import { useNavigate } from "@tanstack/react-router";
+import type { FC } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CommandLine } from "~/components/ui/CommandLine";
+import { PasswordCard } from "~/components/game/PasswordCard";
+import { Console } from "~/components/ui/Console/Console";
+import { TerminalText } from "~/components/ui/TerminalText";
+import { GAME_STATES, GUESS_CHOICES, getFireConfigForScore, ROUTES, TIMING, UI_TEXT } from "~/constants";
+import { useGame } from "~/hooks";
+import type { GuessChoice } from "~/types";
+import "./GameRoute.css";
+import type { ScoreDisplayProps } from "./GameRoute.types";
+import { FireSimulation } from "~/components/Fire/Fire";
 
 const Header: FC = memo(() => (
-  <header className='gameRouteHeader'>
+  <header className="gameRouteHeader">
     <TerminalText text={UI_TEXT.APP_TITLE} duration={TIMING.TERMINAL_TEXT_DURATION} />
   </header>
 ));
 
-Header.displayName = 'Header';
+Header.displayName = "Header";
 
 const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
   <div className="scoreDisplayRoot">
@@ -34,20 +27,11 @@ const ScoreDisplay: FC<ScoreDisplayProps> = memo(({ score }) => (
   </div>
 ));
 
-ScoreDisplay.displayName = 'ScoreDisplay';
+ScoreDisplay.displayName = "ScoreDisplay";
 
 export const GameRoute: FC = () => {
   const navigate = useNavigate();
-  const {
-    leftPassword,
-    rightPassword,
-    score,
-    gameState,
-    isLoading,
-    gameResult,
-    makeGuess,
-    startReveal,
-  } = useGame();
+  const { leftPassword, rightPassword, score, gameState, isLoading, gameResult, makeGuess, startReveal } = useGame();
 
   const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -88,16 +72,18 @@ export const GameRoute: FC = () => {
   const fireConfig = useMemo(() => getFireConfigForScore(score), [score]);
 
   return (
-    <main className='gameRouteContainer'>
-      {fireConfig && <FireSimulation
-        width={200}
-        height={150}
-        intensity={1}
-        {...fireConfig}
-      // fps={24}
-      />}
+    <main className="gameRouteContainer">
+      {fireConfig && (
+        <FireSimulation
+          width={200}
+          height={150}
+          intensity={1}
+          {...fireConfig}
+          // fps={24}
+        />
+      )}
       <Console score={score}>
-        <div className='gameBoard'>
+        <div className="gameBoard">
           <PasswordCard
             key={leftPassword.value}
             password={leftPassword}
@@ -118,7 +104,7 @@ export const GameRoute: FC = () => {
             position={GUESS_CHOICES.RIGHT}
           />
         </div>
-      </Console >
-    </main >
+      </Console>
+    </main>
   );
 };
