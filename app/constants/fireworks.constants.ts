@@ -6,6 +6,7 @@ export type FireworksConfig = {
 };
 
 export const FIREWORKS_CONFIG_BY_SCORE: Record<number, FireworksConfig> = {
+  [1]: { launchRate: 0.01, particleCount: 12, fadeRate: 0.03, fps: 20 },
   [10]: { launchRate: 0.01, particleCount: 12, fadeRate: 0.03, fps: 20 },
   [15]: { launchRate: 0.02, particleCount: 16, fadeRate: 0.025, fps: 22 },
   [20]: { launchRate: 0.03, particleCount: 20, fadeRate: 0.02, fps: 24 },

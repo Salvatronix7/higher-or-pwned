@@ -7,14 +7,7 @@ import { CommandLine } from "~/components/ui/CommandLine";
 import { FireSimulation } from "~/components/Fire/Fire";
 import { FireworksSimulation } from "~/components/Fireworks/Fireworks";
 import { Console } from "~/components/ui/Console/Console";
-import {
-  createShareText,
-  getFireConfigForScore,
-  getFireworksConfigForScore,
-  ROUTES,
-  SARCASTIC_MESSAGES,
-  UI_TEXT
-} from "~/constants";
+import { createShareText, getFireConfigForScore, getFireworksConfigForScore, ROUTES, SARCASTIC_MESSAGES, UI_TEXT } from "~/constants";
 import { getRandomItem } from "~/utils";
 import { ASCII_ART } from "./ResultRoute.constants";
 import "./ResultRoute.css";
@@ -55,41 +48,33 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
   return (
     <div className="container">
-      {fireConfig && (
-        <FireSimulation
-          width={200}
-          height={75}
-          intensity={1}
-          {...fireConfig}
-        />
-      )}
-      {fireworksConfig && (
-        <FireworksSimulation
-          width={160}
-          height={50}
-          {...fireworksConfig}
-        />
-      )}
+      {fireConfig && <FireSimulation width={200} height={75} intensity={1} {...fireConfig} />}
       <Console>
         <main className="main">
           <div className="scoreSection">
-            <CommandLine duration={.5}>{UI_TEXT.SCORE_LABEL.toLowerCase()}</CommandLine>
-            <CommandLine duration={.5} delay={.5}>{score.toString()}</CommandLine>
+            <CommandLine duration={0.5}>{UI_TEXT.SCORE_LABEL.toLowerCase()}</CommandLine>
+            <CommandLine duration={0.5} delay={0.5}>
+              {score.toString()}
+            </CommandLine>
           </div>
 
-          <AsciiArtTyping text={asciiArt} duration={.5} delay={1.5} className="asciiArt" />
-
+          <AsciiArtTyping text={asciiArt} duration={0.5} delay={1.5} className="asciiArt" />
 
           <div className="actions">
-            <Button onClick={handleRetry} duration={.5} delay={2} width={10}>{UI_TEXT.RETRY_BUTTON}</Button>
-            <Button onClick={handleShare} duration={.5} delay={2} width={10}>
+            <Button onClick={handleRetry} duration={0.5} delay={2} width={10}>
+              {UI_TEXT.RETRY_BUTTON}
+            </Button>
+            <Button onClick={handleShare} duration={0.5} delay={2} width={10}>
               {UI_TEXT.SHARE_BUTTON}
             </Button>
           </div>
 
-          <CommandLine duration={1} delay={3} keepCursorAnimation withCursor>{sarcasticMessage}</CommandLine>
+          <CommandLine duration={1} delay={3} keepCursorAnimation withCursor>
+            {sarcasticMessage}
+          </CommandLine>
         </main>
       </Console>
+      {fireworksConfig && <FireworksSimulation width={200} height={150} {...fireworksConfig} />}
     </div>
   );
 };
