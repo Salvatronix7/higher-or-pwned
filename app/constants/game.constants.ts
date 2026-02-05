@@ -1,5 +1,6 @@
 export const GAME_STATES = {
   IDLE: 'idle',
+  COUNTDOWN: 'countdown',
   PLAYING: 'playing',
   REVEALING: 'revealing',
   GAME_OVER: 'gameOver',

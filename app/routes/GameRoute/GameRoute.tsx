@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { FC } from "react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CommandLine } from "~/components/ui/CommandLine";
-import { PasswordCard } from "~/components/game/PasswordCard";
+import { PasswordCard, Timer, Countdown } from "~/components/game";
 import { Console } from "~/components/ui/Console/Console";
 import { TerminalText } from "~/components/ui/TerminalText";
 import { GAME_STATES, GUESS_CHOICES, getFireConfigForScore, ROUTES, TIMING, UI_TEXT } from "~/constants";
@@ -31,7 +31,18 @@ ScoreDisplay.displayName = "ScoreDisplay";
 
 export const GameRoute: FC = () => {
   const navigate = useNavigate();
-  const { leftPassword, rightPassword, score, gameState, isLoading, gameResult, makeGuess, startReveal } = useGame();
+  const {
+    leftPassword,
+    rightPassword,
+    score,
+    gameState,
+    isLoading,
+    gameResult,
+    timeRemaining,
+    countdownValue,
+    makeGuess,
+    startReveal,
+  } = useGame();
 
   const revealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -73,6 +84,9 @@ export const GameRoute: FC = () => {
 
   return (
     <main className="gameRouteContainer">
+      {gameState === GAME_STATES.COUNTDOWN && (
+        <Countdown countdownValue={countdownValue} />
+      )}
       {fireConfig && (
         <FireSimulation
           width={200}
@@ -93,7 +107,10 @@ export const GameRoute: FC = () => {
             showCount={gameState !== GAME_STATES.PLAYING}
             position={GUESS_CHOICES.LEFT}
           />
-          <ScoreDisplay score={score} />
+          <div className='centerDisplay'>
+            <Timer timeRemaining={timeRemaining} />
+            <ScoreDisplay score={score} />
+          </div>
           <PasswordCard
             key={rightPassword.value}
             password={rightPassword}

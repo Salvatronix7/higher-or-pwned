@@ -7,6 +7,8 @@ export interface UseGameReturn {
   readonly gameState: GameState;
   readonly isLoading: boolean;
   readonly gameResult: GameResult | null;
+  readonly timeRemaining: number;
+  readonly countdownValue: number;
   readonly makeGuess: (choice: GuessChoice) => void;
   readonly startReveal: () => boolean;
   readonly resetGame: () => void;

@@ -1,6 +1,6 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
 import { usePwnedCount } from '~/queries';
-import { MAX_ROUNDS_STAYED, GAME_STATES, GUESS_CHOICES } from '~/constants';
+import { MAX_ROUNDS_STAYED, GAME_STATES, GUESS_CHOICES, TIMING } from '~/constants';
 import type { GameResult, GuessChoice, Password } from '~/types';
 import { INITIAL_GAME_STATE } from './useGame.constants';
 import type { UseGameReturn } from './useGame.types';
@@ -19,6 +19,8 @@ export const useGame = (): UseGameReturn => {
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<number>(TIMING.GAME_TIMER_INITIAL);
+  const [countdownValue, setCountdownValue] = useState<number>(TIMING.COUNTDOWN_DURATION);
 
   const leftQuery = usePwnedCount(leftPassword.value);
   const rightQuery = usePwnedCount(rightPassword.value);
@@ -40,6 +42,55 @@ export const useGame = (): UseGameReturn => {
     }),
     [rightPassword, rightQuery.data]
   );
+
+  // Countdown effect (before game starts)
+  useEffect(() => {
+    if (gameState !== GAME_STATES.COUNTDOWN) {
+      return;
+    }
+
+    // Transition to PLAYING when countdown reaches 0
+    if (countdownValue <= 0) {
+      setGameState(GAME_STATES.PLAYING);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCountdownValue((prev) => Math.max(0, prev - 100));
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameState, countdownValue]);
+
+  // Timer countdown effect
+  useEffect(() => {
+    // Only tick timer when in PLAYING state
+    if (gameState !== GAME_STATES.PLAYING) {
+      return;
+    }
+
+    // End game if timer reaches 0
+    if (timeRemaining <= 0) {
+      setGameState(GAME_STATES.GAME_OVER);
+      setGameResult({
+        score,
+        lastLeftPassword: leftPassword.value,
+        lastRightPassword: rightPassword.value,
+        correctAnswer: GUESS_CHOICES.LEFT, // Default, doesn't matter when time's up
+      });
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => Math.max(0, prev - TIMING.GAME_TIMER_TICK));
+    }, TIMING.GAME_TIMER_TICK);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameState, timeRemaining, score, leftPassword.value, rightPassword.value]);
 
   const startReveal = useCallback(() => {
     if (isLoading || gameState !== GAME_STATES.PLAYING) {
@@ -71,9 +122,12 @@ export const useGame = (): UseGameReturn => {
         return;
       }
 
-      setGameState(INITIAL_GAME_STATE);
+      setGameState(GAME_STATES.PLAYING);
       const newScore = score + 1;
       setScore(newScore);
+
+      // Add bonus time for correct guess
+      setTimeRemaining((prev) => prev + TIMING.GAME_TIMER_BONUS);
 
       const updatedUsed = new Set(usedPasswords);
       updatedUsed.add(leftPassword.value);
@@ -136,6 +190,8 @@ export const useGame = (): UseGameReturn => {
     setScore(0);
     setGameState(INITIAL_GAME_STATE);
     setGameResult(null);
+    setTimeRemaining(TIMING.GAME_TIMER_INITIAL);
+    setCountdownValue(TIMING.COUNTDOWN_DURATION);
   }, []);
 
   return {
@@ -145,6 +201,8 @@ export const useGame = (): UseGameReturn => {
     gameState,
     isLoading,
     gameResult,
+    timeRemaining,
+    countdownValue,
     makeGuess,
     startReveal,
     resetGame,

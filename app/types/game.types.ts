@@ -1,4 +1,4 @@
-export type GameState = 'idle' | 'playing' | 'revealing' | 'gameOver';
+export type GameState = 'idle' | 'countdown' | 'playing' | 'revealing' | 'gameOver';
 
 export interface Password {
   readonly value: string;

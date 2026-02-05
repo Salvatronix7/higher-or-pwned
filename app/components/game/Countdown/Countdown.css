@@ -1,0 +1,38 @@
+.countdownOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.countdownNumber {
+  font-size: 10rem;
+  font-weight: bold;
+  color: var(--color-primary, #6366f1);
+  text-shadow: 0 0 20px currentColor;
+  animation: countdownPulse 1s ease-in-out infinite;
+}
+
+@keyframes countdownPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .countdownNumber {
+    font-size: 6rem;
+  }
+}
