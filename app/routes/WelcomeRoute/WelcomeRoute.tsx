@@ -3,13 +3,13 @@ import type { FC } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { TerminalText } from '~/components/ui/TerminalText';
 import { ROUTES, UI_TEXT, TIMING } from '~/constants';
-import type { IndexRouteProps } from './IndexRoute.types';
-import { isStartKey } from './IndexRoute.utils';
-import './IndexRoute.css';
+import type { WelcomeRouteProps } from './WelcomeRoute.types';
+import { isStartKey } from './WelcomeRoute.utils';
+import './WelcomeRoute.css';
 import { CommandLine } from '~/components/ui/CommandLine/CommandLine';
 import { Console } from '~/components/ui/Console/Console';
 
-export const IndexRoute: FC<IndexRouteProps> = () => {
+export const WelcomeRoute: FC<WelcomeRouteProps> = () => {
   const navigate = useNavigate();
 
   const handleStart = useCallback(() => {
@@ -31,7 +31,7 @@ export const IndexRoute: FC<IndexRouteProps> = () => {
   }, [handleKeyDown]);
 
   return (
-    <div className='indexRouteContainer' onClick={handleStart}>
+    <div className='welcomeRouteContainer' onClick={handleStart}>
       <Console>
         <CommandLine duration={1} withCursor>Welcome to</CommandLine>
         <br />

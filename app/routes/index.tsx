@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { ROUTES } from '~/constants';
-import { IndexRoute } from './IndexRoute';
+import { WelcomeRoute } from './WelcomeRoute';
 
 export const Route = createFileRoute(ROUTES.HOME)({
-  component: IndexRoute,
+  component: WelcomeRoute,
 });
