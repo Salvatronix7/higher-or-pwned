@@ -9,16 +9,16 @@ export const Timer: FC<TimerProps> = memo(({ timeRemaining }) => {
   const formattedTime = useMemo(() => {
     const totalMs = Math.max(0, timeRemaining);
     const seconds = Math.floor(totalMs / 1000);
-    const milliseconds = totalMs % 1000;
+    const milliseconds = Math.floor((totalMs % 1000) / 10);
 
-    // Format as "SS.mmm" (e.g., "15.000", "3.250")
-    return `${seconds}.${milliseconds.toString().padStart(3, '0')}`;
+    // Format as "SS.mm" (e.g., "15.00", "3.25")
+    return `${seconds}.${milliseconds.toString().padStart(2, '0')}`;
   }, [timeRemaining]);
 
   return (
     <div className="timerRoot">
       <CommandLine>{`       ${UI_TEXT.TIMER_LABEL}       `}</CommandLine>
-      <CommandLine>{`      ${formattedTime}s      `}</CommandLine>
+      <CommandLine>{`      ${formattedTime}      `}</CommandLine>
     </div>
   );
 });
