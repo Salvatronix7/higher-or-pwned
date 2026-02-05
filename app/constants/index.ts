@@ -19,4 +19,11 @@ export {
 } from './ui.constants';
 
 export { API, API_HEADERS, CRYPTO } from './api.constants';
-export { FIRE_CONFIG_BY_SCORE, getFireConfigForScore, type FireConfig } from './fire.constants';
+export {
+  FIRE_CONFIG_BY_SCORE,
+  FIREWORKS_CONFIG_BY_SCORE,
+  getFireConfigForScore,
+  getFireworksConfigForScore,
+  type FireConfig,
+  type FireworksConfig,
+} from './fire.constants';

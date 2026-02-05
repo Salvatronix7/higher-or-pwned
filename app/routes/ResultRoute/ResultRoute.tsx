@@ -5,10 +5,12 @@ import { AsciiArtTyping } from "~/components/ui/AsciiArtTyping";
 import { Button } from "~/components/ui/Button";
 import { CommandLine } from "~/components/ui/CommandLine";
 import { FireSimulation } from "~/components/Fire/Fire";
+import { FireworksSimulation } from "~/components/Fireworks";
 import { Console } from "~/components/ui/Console/Console";
 import {
   createShareText,
   getFireConfigForScore,
+  getFireworksConfigForScore,
   ROUTES,
   SARCASTIC_MESSAGES,
   UI_TEXT
@@ -49,6 +51,7 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
 
   const asciiArt = useMemo(() => getRandomItem(ASCII_ART), []);
   const fireConfig = useMemo(() => getFireConfigForScore(score), [score]);
+  const fireworksConfig = useMemo(() => getFireworksConfigForScore(score), [score]);
 
   return (
     <div className="container">
@@ -58,6 +61,14 @@ export const ResultRoute: FC<ResultRouteProps> = ({ score }) => {
           height={75}
           intensity={1}
           {...fireConfig}
+        />
+      )}
+      {fireworksConfig && (
+        <FireworksSimulation
+          width={200}
+          height={75}
+          intensity={1}
+          {...fireworksConfig}
         />
       )}
       <Console>
