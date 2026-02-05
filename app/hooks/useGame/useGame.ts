@@ -20,6 +20,7 @@ export const useGame = (): UseGameReturn => {
   const [gameState, setGameState] = useState(INITIAL_GAME_STATE);
   const [gameResult, setGameResult] = useState<GameResult | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number>(TIMING.GAME_TIMER_INITIAL);
+  const [countdownValue, setCountdownValue] = useState<number>(TIMING.COUNTDOWN_DURATION);
 
   const leftQuery = usePwnedCount(leftPassword.value);
   const rightQuery = usePwnedCount(rightPassword.value);
@@ -41,6 +42,27 @@ export const useGame = (): UseGameReturn => {
     }),
     [rightPassword, rightQuery.data]
   );
+
+  // Countdown effect (before game starts)
+  useEffect(() => {
+    if (gameState !== GAME_STATES.COUNTDOWN) {
+      return;
+    }
+
+    // Transition to PLAYING when countdown reaches 0
+    if (countdownValue <= 0) {
+      setGameState(GAME_STATES.PLAYING);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCountdownValue((prev) => Math.max(0, prev - 100));
+    }, 100);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameState, countdownValue]);
 
   // Timer countdown effect
   useEffect(() => {
@@ -100,7 +122,7 @@ export const useGame = (): UseGameReturn => {
         return;
       }
 
-      setGameState(INITIAL_GAME_STATE);
+      setGameState(GAME_STATES.PLAYING);
       const newScore = score + 1;
       setScore(newScore);
 
@@ -169,6 +191,7 @@ export const useGame = (): UseGameReturn => {
     setGameState(INITIAL_GAME_STATE);
     setGameResult(null);
     setTimeRemaining(TIMING.GAME_TIMER_INITIAL);
+    setCountdownValue(TIMING.COUNTDOWN_DURATION);
   }, []);
 
   return {
@@ -179,6 +202,7 @@ export const useGame = (): UseGameReturn => {
     isLoading,
     gameResult,
     timeRemaining,
+    countdownValue,
     makeGuess,
     startReveal,
     resetGame,
