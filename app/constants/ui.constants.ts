@@ -1,6 +1,7 @@
 export const UI_TEXT = {
   APP_TITLE: 'HIGHER || PWNED',
   SCORE_LABEL: 'SCORE',
+  TIMER_LABEL: 'TIME',
   GAME_INSTRUCTION: '> click the password with MORE breaches_',
   START_PROMPT: '> press any key to start',
   LOADING: 'loading...',

@@ -1,0 +1,11 @@
+.timerRoot {
+  font-size: 2rem;
+  width: 8rem;
+  place-self: center;
+  text-align: center;
+  line-height: .4;
+
+  div {
+    height: 2rem;
+  }
+}

@@ -18,6 +18,13 @@
   }
 }
 
+.centerDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  place-self: center;
+}
+
 .scoreDisplayRoot {
   font-size: 2rem;
   width: 8rem;
