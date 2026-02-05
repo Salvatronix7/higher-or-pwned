@@ -1,7 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { FC } from "react";
 import { useCallback, useMemo } from "react";
-import { AsciiArtTyping, Button, CommandLine } from "~/components";
+import { AsciiArtTyping } from "~/components/ui/AsciiArtTyping";
+import { Button } from "~/components/ui/Button";
+import { CommandLine } from "~/components/ui/CommandLine";
 import { FireSimulation } from "~/components/Fire/Fire";
 import { Console } from "~/components/ui/Console/Console";
 import {

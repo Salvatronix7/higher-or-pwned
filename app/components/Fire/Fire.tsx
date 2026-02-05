@@ -1,7 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import type { CSSProperties, FC } from 'react';
 import './Fire.css';
-import { motion } from 'framer-motion';
 
 const DEFAULT_PALETTE = ' .:-=+*#%@';
 
@@ -26,7 +25,7 @@ const clamp = (value: number, min = 0, max = 1) =>
 const createGrid = (width: number, height: number) =>
     Array.from({ length: width * height }, () => 0);
 
-export const FireSimulation: FC<FireSimulationProps> = ({
+export const FireSimulation: FC<FireSimulationProps> = memo(({
     width = 32,
     height = 32,
     fps = 20,
@@ -120,6 +119,6 @@ export const FireSimulation: FC<FireSimulationProps> = ({
             {output}
         </pre>
     );
-}
+});
 
 FireSimulation.displayName = 'FireSimulation';
