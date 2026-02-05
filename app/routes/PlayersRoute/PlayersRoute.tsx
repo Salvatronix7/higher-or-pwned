@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { Button, CommandLine } from "~/components";
+import { Button } from "~/components/ui/Button";
+import { CommandLine } from "~/components/ui/CommandLine";
 import "./PlayersRoute.css";
 import { Console } from "~/components/ui/Console/Console";
 

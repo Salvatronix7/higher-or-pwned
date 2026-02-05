@@ -6,7 +6,8 @@ import { UI_TEXT, TIMING } from '~/constants';
 import type { PasswordCardProps } from './PasswordCard.types';
 import { getCardClassName } from './PasswordCard.utils';
 import './PasswordCard.css';
-import { Button, CommandLine } from '~/components/ui';
+import { Button } from '~/components/ui/Button';
+import { CommandLine } from '~/components/ui/CommandLine';
 
 export const PasswordCard: FC<PasswordCardProps> = memo(
   ({ password, guess, isLoading, isDisabled, showCount, position }) => {

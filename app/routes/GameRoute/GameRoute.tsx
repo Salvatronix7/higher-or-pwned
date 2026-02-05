@@ -1,7 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { FC } from 'react';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { CommandLine, PasswordCard } from '~/components';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { CommandLine } from '~/components/ui/CommandLine';
+import { PasswordCard } from '~/components/game/PasswordCard';
 import { Console } from '~/components/ui/Console/Console';
 import { TerminalText } from '~/components/ui/TerminalText';
 import {
@@ -84,7 +85,7 @@ export const GameRoute: FC = () => {
     };
   }, []);
 
-  const fireConfig = getFireConfigForScore(score);
+  const fireConfig = useMemo(() => getFireConfigForScore(score), [score]);
 
   return (
     <main className='gameRouteContainer'>
