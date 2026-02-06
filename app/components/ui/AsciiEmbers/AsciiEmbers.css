@@ -1,0 +1,9 @@
+.asciiEmbers {
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  font-size: 12px;
+  line-height: 1.1;
+  white-space: pre;
+  user-select: none;
+  margin: 0;
+  color: currentColor;
+}
